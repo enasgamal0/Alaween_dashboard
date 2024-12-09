@@ -33,16 +33,6 @@
           />
           <!-- End:: Name Input -->
 
-          <!-- Start:: Status Input -->
-          <base-select-input
-            col="6"
-            :optionsList="areas"
-            :placeholder="$t('PLACEHOLDERS.area')"
-            v-model="data.area"
-            required
-          />
-          <!-- End:: Status Input -->
-
           <!-- Start:: Deactivate Switch Input -->
           <div class="input_wrapper switch_wrapper my-5 col-6">
             <v-switch
@@ -95,28 +85,15 @@ export default {
       data: {
         name_ar: null,
         name_en: null,
-        area_id: null,
         active: true,
       },
       // End:: Data Collection To Send
-      areas: [],
       arabicRegex: /^[\u0600-\u06FF\s]+$/,
       EnRegex: /[\u0600-\u06FF]/,
     };
   },
 
   methods: {
-    async getAreas() {
-      try {
-        let res = await this.$axios({
-          method: "GET",
-          url: `areas`,
-        });
-        this.areas = res.data.data;
-      } catch (error) {
-        console.log(error.response.data.message);
-      }
-    },
     disabledDate(current) {
       return current && current < moment().startOf("day");
     },
@@ -148,8 +125,18 @@ export default {
     // Start:: validate Form Inputs
     validateFormInputs() {
       this.isWaitingRequest = true;
-
-      this.submitForm();
+      if (!this.data.name_ar) {
+        this.isWaitingRequest = false;
+        this.$message.error(this.$t("VALIDATION.nameAr"));
+        return;
+      } else if (!this.data.name_en) {
+        this.isWaitingRequest = false;
+        this.$message.error(this.$t("VALIDATION.nameEn"));
+        return;
+      } else {
+        this.submitForm();
+        return;
+      }
     },
     // End:: validate Form Inputs
 
@@ -162,9 +149,6 @@ export default {
       }
       if (this.data.name_en) {
         REQUEST_DATA.append("name[en]", this.data.name_en);
-      }
-      if (this.data.area) {
-        REQUEST_DATA.append("area_id", this.data.area.id);
       }
       REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
 
@@ -184,12 +168,6 @@ export default {
       }
     },
     // End:: Submit Form
-  },
-
-  created() {
-    // Start:: Fire Methods
-    // End:: Fire Methods
-    this.getAreas();
   },
 };
 </script>

@@ -14,80 +14,22 @@
     <div class="single_step_form_content_wrapper">
       <form @submit.prevent="validateFormInputs">
         <div class="row">
-          <!-- Start:: Tax Input -->
-          <base-input
-            type="number"
-            col="6"
-            :placeholder="`${$t('PLACEHOLDERS.tax')} %`"
-            v-model.trim="data.Tax"
-          />
-          <!-- End:: Tax Input -->
-          <!-- Start:: Tax Input -->
-          <base-select-input
-            col="6"
-            :optionsList="cancel_options"
-            :placeholder="$t('SIDENAV.GeneralSetting.order_cancellation_mechanism')"
-            v-model.trim="data.Cancel_order"
-            required
-          />
-          <!-- End:: Tax Input -->
-          <!-- Start:: Hours Inputs -->
-          <base-input
-            type="number"
-            col="6"
-            :placeholder="`${$t('SIDENAV.GeneralSetting.Possibility_canceling_reservation')}`"
-            v-model.trim="data.Possibility_canceling_reservation"
-          />
-          <base-input
-            type="number"
-            col="6"
-            :placeholder="`${$t('SIDENAV.GeneralSetting.Possibility_modifying_reservation')}`"
-            v-model.trim="data.Possibility_modifying_reservation"
-          />
+        <!-- Start:: video_limit Input -->
           <base-input
             type="number"
             col="12"
-            :placeholder="`${$t('SIDENAV.GeneralSetting.Limit_maximum_number_hours_create_order')}`"
-            v-model.trim="data.Limit_maximum_number_hours_create_order"
+            :placeholder="$t('PLACEHOLDERS.video_limit')"
+            v-model="data.video_limit"
           />
-          <base-input
-            type="number"
-            col="12"
-            :placeholder="`${$t('SIDENAV.GeneralSetting.Maximum_time_before_sending_order_details')}`"
-            v-model.trim="data.Maximum_time_before_sending_order_details"
-          />
-          <base-input
-            type="number"
-            col="12"
-            :placeholder="`${$t('SIDENAV.GeneralSetting.permissible_duration_additional_service')}`"
-            v-model.trim="data.permissible_duration_additional_service"
-          />
-          <!-- End:: Hours Input -->
-          <!-- Start:: Time Inputs -->
-           <base-picker-input
-            col="6"
-            type="time"
-            :placeholder="$t('SIDENAV.GeneralSetting.start_work')"
-            v-model.trim="data.start_work"
-            required
-          />
-          <base-picker-input
-            col="6"
-            type="time"
-            :placeholder="$t('SIDENAV.GeneralSetting.end_work')"
-            v-model.trim="data.end_work"
-            required
-          />
-        <!-- End:: Time Inputs -->
-        <!-- Start:: different_time_duration Input -->
-          <base-input
-            type="number"
-            col="6"
-            :placeholder="$t('SIDENAV.GeneralSetting.cleanDuration')"
-            v-model="data.different_time_duration"
-          />
-        <!-- End:: different_time_duration Input -->
-
+        <!-- End:: video_limit Input -->
+        <!-- Start:: distance Input -->
+        <base-input
+          type="number"
+          col="12"
+          :placeholder="`${$t('PLACEHOLDERS.distance')}`"
+          v-model.trim="data.distance"
+        />
+        <!-- End:: distance Input -->
         <!-- Start:: Submit Button Wrapper -->
           <div class="btn_wrapper">
             <base-button
@@ -119,16 +61,8 @@ export default {
 
       // Start:: Data
       data: {
-        different_time_duration: null,
-        Tax: null,
-        start_work: null,
-        end_work: null,
-        Cancel_order: null,
-        Possibility_canceling_reservation: null,
-        Possibility_modifying_reservation: null,
-        Limit_maximum_number_hours_create_order: null,
-        Maximum_time_before_sending_order_details: null,
-        permissible_duration_additional_service: null,
+        video_limit: null,
+        distance: null,
       },
       // End:: Data
     };
@@ -162,22 +96,12 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `settings?key=dashboard_setting`,
+          url: `settings?key=general`,
         });
         // console.log("DATA =>", res.data.data);
         const settings = res.data.data[0].value;
-        this.data.Tax = settings.tax;
-        this.data.different_time_duration = settings.different_time_duration;
-        this.data.start_work = settings.start_work;
-        this.data.end_work = settings.end_work;
-        this.data.Cancel_order = settings.Cancel_order == 1 
-          ? { id: 1, name: this.$t("PLACEHOLDERS.yes"), value: 1 } 
-          : { id: 0, name: this.$t("PLACEHOLDERS.no"), value: 0 };
-        this.data.Possibility_canceling_reservation = settings.Possibility_canceling_reservation;
-        this.data.Possibility_modifying_reservation = settings.Possibility_modifying_reservation;
-        this.data.Limit_maximum_number_hours_create_order = settings.Limit_maximum_number_hours_create_order;
-        this.data.Maximum_time_before_sending_order_details = settings.Maximum_time_before_sending_order_details;
-        this.data.permissible_duration_additional_service = settings.permissible_duration_additional_service;
+        this.data.video_limit = settings.video_limit;
+        this.data.distance = settings.distance;
       } catch (error) {
         console.log(error.response.data.message);
       }
@@ -190,21 +114,12 @@ export default {
 
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
-      REQUEST_DATA.append("key", "dashboard_setting");
+      REQUEST_DATA.append("key", "general");
+      REQUEST_DATA.append("value[video_limit]", this.data.video_limit);
       REQUEST_DATA.append(
-        "value[tax]",
-        this.data.Tax
+        "value[distance]",
+        this.data.distance
       );
-      REQUEST_DATA.append("value[different_time_duration]", this.data.different_time_duration);
-      REQUEST_DATA.append("value[start_work]", this.data.start_work);
-      REQUEST_DATA.append("value[end_work]", this.data.end_work);
-      REQUEST_DATA.append("value[Cancel_order]", this.data.Cancel_order?.value);
-      REQUEST_DATA.append("value[Possibility_canceling_reservation]", this.data.Possibility_canceling_reservation);
-      REQUEST_DATA.append("value[Possibility_modifying_reservation]", this.data.Possibility_modifying_reservation);
-      REQUEST_DATA.append("value[Limit_maximum_number_hours_create_order]", this.data.Limit_maximum_number_hours_create_order);
-      REQUEST_DATA.append("value[Maximum_time_before_sending_order_details]", this.data.Maximum_time_before_sending_order_details);
-      REQUEST_DATA.append("value[permissible_duration_additional_service]", this.data.permissible_duration_additional_service);
-
       // Start:: Append Request Data
 
       try {
@@ -226,16 +141,17 @@ export default {
     // Start:: validate Form Inputs
     validateFormInputs() {
       this.isWaitingRequest = true;
-      if (!this.data.Tax || this.data.Tax === "null") {
+      if (!this.data.video_limit || this.data.video_limit === "null") {
         this.isWaitingRequest = false;
-        this.$message.error(this.$t("VALIDATION.Tax"));
+        this.$message.error(this.$t("VALIDATION.video_limit"));
         return;
       }
-      if (!this.data.different_time_duration || this.data.different_time_duration === "null") {
+      else if (!this.data.distance || this.data.distance === "null") {
         this.isWaitingRequest = false;
-        this.$message.error(this.$t("VALIDATION.different_time_duration"));
+        this.$message.error(this.$t("VALIDATION.distance"));
         return;
-      } else {
+      }
+      else {
         this.submitForm();
         return;
       }

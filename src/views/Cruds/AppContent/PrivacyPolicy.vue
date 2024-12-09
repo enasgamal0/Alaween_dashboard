@@ -81,8 +81,8 @@ export default {
           url: `settings?key=privacy_policy`,
         });
         // Start:: Set Data
-        this.data.contentAr = res.data.data[0].value.ar;
-        this.data.contentEn = res.data.data[0].value.en;
+        this.data.contentAr = res.data.data[0].value?.description?.ar;
+        this.data.contentEn = res.data.data[0].value?.description?.en;
         // End:: Set Data
       } catch (error) {
         console.log(error.response.data.message);
@@ -114,8 +114,8 @@ export default {
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
       REQUEST_DATA.append("key", "privacy_policy");
-      REQUEST_DATA.append("value[ar]", this.data.contentAr);
-      REQUEST_DATA.append("value[en]", this.data.contentEn);
+      REQUEST_DATA.append("value[description][ar]", this.data.contentAr);
+      REQUEST_DATA.append("value[description][en]", this.data.contentEn);
       // REQUEST_DATA.append("_method", "PUT");
 
       try {

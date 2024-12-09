@@ -82,9 +82,9 @@ export default {
         });
         // Start:: Set Data
         this.data.contentAr =
-          res.data.data[0].value.ar;
+          res.data.data[0].value?.description?.ar;
         this.data.contentEn =
-          res.data.data[0].value.en;
+          res.data.data[0].value?.description?.en;
 
         // End:: Set Data
       } catch (error) {
@@ -119,11 +119,11 @@ export default {
       REQUEST_DATA.append("key", "terms_and_conditions");
 
       REQUEST_DATA.append(
-        "value[ar]",
+        "value[description][ar]",
         this.data.contentAr
       );
       REQUEST_DATA.append(
-        "value[en]",
+        "value[description][en]",
         this.data.contentEn
       );
       // REQUEST_DATA.append("_method", "PUT");

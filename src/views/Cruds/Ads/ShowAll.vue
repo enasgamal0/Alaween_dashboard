@@ -71,7 +71,7 @@
 
         <div
           class="title_route_wrapper"
-          v-if="$can('advertisments create', 'advertisments')"
+          v-if="$can('slider create', 'slider')"
         >
           <router-link to="/ads/create">
             {{ $t("PLACEHOLDERS.add_ads") }}
@@ -122,16 +122,16 @@
         </template>
         <!-- End:: Title -->
         <!-- Start:: Item Image -->
-        <template v-slot:[`item.image`]="{ item }">
+        <template v-slot:[`item.media`]="{ item }">
           <div class="table_image_wrapper">
-            <h6 class="text-danger" v-if="!item.image">
+            <h6 class="text-danger" v-if="!item.media">
               {{ $t("TABLES.noData") }}
             </h6>
 
             <button class="my-1" @click="showImageModal(item)" v-else>
               <video
-                v-if="item.image.endsWith('mp4')"
-                :src="item.image"
+                v-if="item.media.endsWith('mp4')"
+                :src="item.media"
                 width="80"
                 height="60"
                 class="rounded"
@@ -139,7 +139,7 @@
               <img
                 v-else
                 class="rounded"
-                :src="item.image"
+                :src="item.media"
                 width="60"
                 height="60"
               />
@@ -154,7 +154,7 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('advertisments activate', 'advertisments')"
+            v-if="$can('slider activate', 'slider')"
           >
             <v-switch
               class="mt-2"
@@ -181,7 +181,7 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('advertisments show', 'advertisments')"
+              v-if="$can('slider show', 'slider')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
@@ -193,7 +193,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('advertisments edit', 'advertisments')"
+              v-if="$can('slider edit', 'slider')"
               :class="{ disable_parent: item.can_edit === true }"
             >
               <template slot="title">
@@ -210,7 +210,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('advertisments delete', 'advertisments')"
+              v-if="$can('slider delete', 'slider')"
               :class="{ disable_parent: item.can_delete === true }"
             >
               <template slot="title">
@@ -322,11 +322,6 @@ export default {
     activeStatuses() {
       return [
         {
-          id: null,
-          name: this.$t("STATUS.all"),
-          value: null,
-        },
-        {
           id: 1,
           name: this.$t("STATUS.active"),
           value: 1,
@@ -366,26 +361,26 @@ export default {
           sortable: false,
         },
         {
-          text: this.$t("TABLES.ImagesSpaces.name"),
+          text: this.$t("PLACEHOLDERS.ad_name"),
           value: "name",
           sortable: false,
           align: "center",
         },
         {
-          text: this.$t("PLACEHOLDERS.contents"),
-          value: "image",
+          text: this.$t("PLACEHOLDERS.attachment"),
+          value: "media",
           sortable: false,
           align: "center",
         },
         {
           text: this.$t("PLACEHOLDERS.start_date"),
-          value: "start_at",
+          value: "start_date",
           sortable: false,
           align: "center",
         },
         {
           text: this.$t("PLACEHOLDERS.end_date"),
-          value: "end_at",
+          value: "end_date",
           sortable: false,
           align: "center",
         },
@@ -477,7 +472,7 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "advertisements",
+          url: "sliders",
           params: {
             page: this.paginations.current_page,
             name: this.filterOptions.name,
@@ -506,7 +501,7 @@ export default {
       try {
         await this.$axios({
           method: "POST",
-          url: `advertisements/activate/${item.id}`,
+          url: `sliders/${item.id}/activate`,
         });
         this.$message.success(this.$t("MESSAGES.changeActivation"));
       } catch (error) {
@@ -528,8 +523,8 @@ export default {
 
     showImageModal(item) {
       this.dialogImage = true;
-      this.selectedItemImage = item.image;
-      this.selectedItemType = item.image.endsWith("mp4") ? "video" : "image";
+      this.selectedItemImage = item.media;
+      this.selectedItemType = item.media.endsWith("mp4") ? "video" : "image";
     },
 
     // ===== Start:: Delete
@@ -542,7 +537,7 @@ export default {
       try {
         await this.$axios({
           method: "DELETE",
-          url: `advertisements/${this.itemToDelete.id}`,
+          url: `sliders/${this.itemToDelete.id}`,
         });
         this.dialogDelete = false;
         this.tableRows = this.tableRows.filter((item) => {

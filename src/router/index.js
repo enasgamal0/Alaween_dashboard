@@ -59,7 +59,6 @@ import AboutUs from "../views/Cruds/AppContent/AboutUs.vue";
 import Terms from "../views/Cruds/AppContent/Terms.vue";
 import DeleteAccount from "../views/Cruds/AppContent/DeleteAccount.vue";
 import PrivacyPolicy from "../views/Cruds/AppContent/PrivacyPolicy.vue";
-import BookingTerms from "../views/Cruds/AppContent/BookingTerms.vue";
 // ============== End:: App Content Routes
 
 // Start:: Questiions Router Components
@@ -95,7 +94,6 @@ import EditProducts from "../views/Cruds/Products/Edit.vue";
 import CitiesHome from "../views/Cruds/Cities/Home.vue";
 import AllCities from "../views/Cruds/Cities/ShowAll.vue";
 import CreateCities from "../views/Cruds/Cities/Create.vue";
-import ShowCities from "../views/Cruds/Cities/Show.vue";
 import EditCities from "../views/Cruds/Cities/Edit.vue";
 // ============== End:: Cities Routes
 
@@ -375,18 +373,6 @@ const routes = [
             path: "policy",
             name: "PrivacyPolicy",
             component: PrivacyPolicy,
-            meta: {
-              middleware: [auth],
-              requiresPermission: {
-                action: "settings create",
-                subject: "settings",
-              },
-            },
-          },
-          {
-            path: "booking-terms",
-            name: "BookingTerms",
-            component: BookingTerms,
             meta: {
               middleware: [auth],
               requiresPermission: {
@@ -751,19 +737,6 @@ const routes = [
               middleware: [auth],
               requiresPermission: {
                 action: "cities edit",
-                subject: "cities",
-              },
-            },
-          },
-          {
-            path: "show/:id",
-            name: "Showcities",
-            component: ShowCities,
-            props: true,
-            meta: {
-              middleware: [auth],
-              requiresPermission: {
-                action: "cities show",
                 subject: "cities",
               },
             },
@@ -1279,8 +1252,8 @@ const routes = [
             meta: {
               middleware: [auth],
               requiresPermission: {
-                action: "advertisments index",
-                subject: "advertisments",
+                action: "slider index",
+                subject: "slider",
               },
             },
           },
@@ -1291,8 +1264,8 @@ const routes = [
             meta: {
               middleware: [auth],
               requiresPermission: {
-                action: "advertisments create",
-                subject: "advertisments",
+                action: "slider create",
+                subject: "slider",
               },
             },
           },
@@ -1304,8 +1277,8 @@ const routes = [
             meta: {
               middleware: [auth],
               requiresPermission: {
-                action: "advertisments edit",
-                subject: "advertisments",
+                action: "slider edit",
+                subject: "slider",
               },
             },
           },
@@ -1317,8 +1290,8 @@ const routes = [
             meta: {
               middleware: [auth],
               requiresPermission: {
-                action: "advertisments show",
-                subject: "advertisments",
+                action: "slider show",
+                subject: "slider",
               },
             },
           },

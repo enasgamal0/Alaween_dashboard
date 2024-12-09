@@ -85,8 +85,8 @@ export default {
           url: `settings?key=delete_account`,
         });
         // Start:: Set Data
-        this.data.contentAr = res.data.data[0].value.ar;
-        this.data.contentEn = res.data.data[0].value.en;
+        this.data.contentAr = res.data.data[0].value?.description?.ar;
+        this.data.contentEn = res.data.data[0].value?.description?.en;
         // End:: Set Data
       } catch (error) {
         console.log(error.response.data.message);
@@ -120,11 +120,11 @@ export default {
       REQUEST_DATA.append("key", "delete_account");
 
       REQUEST_DATA.append(
-        "value[ar]",
+        "value[description][ar]",
         this.data.contentAr
       );
       REQUEST_DATA.append(
-        "value[en]",
+        "value[description][en]",
         this.data.contentEn
       );
       // REQUEST_DATA.append("_method", "PUT");

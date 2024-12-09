@@ -19,7 +19,6 @@
                 <i class="fas fa-plus"></i>
               </div>
             </div>
-
             <div
               class="col-lg-6 col-12"
               v-for="(item, index) in phones"
@@ -41,69 +40,42 @@
               </div>
             </div>
           </div>
-
-          <!-- Start:: Tax Percentage Input -->
-          <base-input
-            col="6"
-            type="text"
-            :placeholder="$t('PLACEHOLDERS.email')"
-            v-model.trim="data.email"
-          />
-          <!-- End:: Tax Percentage Input -->
-
-          <!-- Start:: Tax Percentage Input -->
           <base-input
             col="6"
             type="text"
             :placeholder="$t('PLACEHOLDERS.WhatsApp_contact')"
             v-model.trim="data.WhatsApp_contact"
           />
-          <!-- End:: Tax Percentage Input -->
-
-          <!-- Start:: Tax Percentage Input -->
           <base-input
             col="6"
             type="text"
-            :placeholder="$t('PLACEHOLDERS.twitter_link')"
-            v-model.trim="data.twitter_link"
+            :placeholder="$t('PLACEHOLDERS.facebook')"
+            v-model.trim="data.facebook"
           />
-          <!-- End:: Tax Percentage Input -->
-
-          <!-- Start:: Delivery Price Input -->
-          <!-- <base-input
-            col="6"
-            type="text"
-            :placeholder="$t('PLACEHOLDERS.tiktok_link')"
-            v-model.trim="data.tiktok_link"
-          /> -->
-          <!-- End:: Delivery Price Input -->
-
-          <!-- Start:: Driver's Daily Orders Amount Input -->
           <base-input
             col="6"
             type="text"
             :placeholder="$t('PLACEHOLDERS.instagram')"
-            v-model.trim="data.instagram_link"
+            v-model.trim="data.instagram"
           />
-          <!-- End:: Driver's Daily Orders Amount Input -->
-
-           <!-- Start:: Tax Percentage Input -->
-           <base-input
-            col="6"
-            type="text"
-            :placeholder="$t('PLACEHOLDERS.android')"
-            v-model.trim="data.android"
-          />
-          <!-- End:: Tax Percentage Input -->
-            <!-- Start:: Tax Percentage Input -->
           <base-input
             col="6"
             type="text"
-            :placeholder="$t('PLACEHOLDERS.ios')"
-            v-model.trim="data.ios"
+            :placeholder="$t('PLACEHOLDERS.snapchat')"
+            v-model.trim="data.snapchat"
           />
-          <!-- End:: Tax Percentage Input -->
-
+          <base-input
+            col="6"
+            type="text"
+            :placeholder="$t('PLACEHOLDERS.twitter')"
+            v-model.trim="data.twitter"
+          />
+          <base-input
+            col="6"
+            type="text"
+            :placeholder="$t('PLACEHOLDERS.tiktok')"
+            v-model.trim="data.tiktok"
+          />
           <!-- Start:: Submit Button Wrapper -->
           <div class="btn_wrapper">
             <base-button
@@ -135,13 +107,11 @@ export default {
       // Start:: Data Collection To Send
       data: {
         WhatsApp_contact: null,
-        linkedIn_link: null,
-        twitter_link: null,
-        // tiktok_link: null,
-        instagram_link: null,
-        android: null,
-        ios: null,
-        email: null,
+        twitter: null,
+        tiktok: null,
+        instagram: null,
+        facebook: null,
+        snapchat: null,
       },
       // End:: Data Collection To Send
 
@@ -167,23 +137,19 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `settings?key=social_contact`,
+          url: `settings?key=contact`,
         });
         // Start:: Set Data
-
         // Transform the API response
-        this.phones = res.data.data[0].value.mobile.map((phone) => ({
+        this.phones = res.data.data[0].value?.mobile?.map((phone) => ({
           phone: phone,
         }));
-
-        this.data.WhatsApp_contact = res.data.data[0].value.whatsapp;
-        this.data.twitter_link = res.data.data[0].value.x;
-        // this.data.tiktok_link = res.data.data[0].value.tiktok;
-        this.data.email = res.data.data[0].value.email;
-        this.data.instagram_link = res.data.data[0].value.instagram;
-        this.data.android = res.data.data[0].value.android;
-        this.data.ios = res.data.data[0].value.ios;
-        this.data.linkedIn_link = res.data.data[0].value.linkedin;
+        this.data.WhatsApp_contact = res.data.data[0].value?.whatsapp;
+        this.data.twitter = res.data.data[0].value?.x;
+        this.data.tiktok = res.data.data[0].value?.tiktok;
+        this.data.instagram = res.data.data[0].value?.instagram;
+        this.data.facebook = res.data.data[0].value?.facebook;
+        this.data.snapchat = res.data.data[0].value?.snapchat;
 
         // End:: Set Data
       } catch (error) {
@@ -198,20 +164,18 @@ export default {
 
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
-      REQUEST_DATA.append("key", "social_contact");
+      REQUEST_DATA.append("key", "contact");
 
       this.phones.forEach((element, index) => {
         REQUEST_DATA.append(`value[mobile][${index}]`, element.phone);
       });
 
       REQUEST_DATA.append("value[whatsapp]", this.data.WhatsApp_contact);
-      // REQUEST_DATA.append("value[tiktok]", this.data.tiktok_link);
-      REQUEST_DATA.append("value[x]", this.data.twitter_link);
-      REQUEST_DATA.append("value[instagram]", this.data.instagram_link);
-      REQUEST_DATA.append("value[android]", this.data.android);
-      REQUEST_DATA.append("value[ios]", this.data.ios);
-      REQUEST_DATA.append("value[email]", this.data.email);
-      // REQUEST_DATA.append("value[linkedin]", this.data.linkedIn_link);
+      REQUEST_DATA.append("value[tiktok]", this.data.tiktok);
+      REQUEST_DATA.append("value[x]", this.data.twitter);
+      REQUEST_DATA.append("value[instagram]", this.data.instagram);
+      REQUEST_DATA.append("value[facebook]", this.data.facebook);
+      REQUEST_DATA.append("value[snapchat]", this.data.snapchat);
 
       // Start:: Append Request Data
 

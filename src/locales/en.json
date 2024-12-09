@@ -1006,11 +1006,11 @@
     "hi": "Hi",
     "dashboardWelcome": "Welcome To Saramh Admin Dashboard",
     "searchBy": "Search By",
-    "DeleteConfirmingMessage": "Are You Sure?! ({name}) Will Be Deleted",
+    "DeleteConfirmingMessage": "Are You Sure? ({name}) Will Be Deleted",
     "DeleteDate": "You will not be able to retrieve data again",
-    "DeactivateConfirmingMessage": "Are You Sure?! ({name}) Will Be Deactivated",
-    "rejectConfirmingMessage": "Are You Sure?! ({name}) Will Be Rejected",
-    "logoutConfirmingMessage": "Are You Sure?! You Want To Logout",
+    "DeactivateConfirmingMessage": "Are You Sure? ({name}) Will Be Deactivated",
+    "rejectConfirmingMessage": "Are You Sure? ({name}) Will Be Rejected",
+    "logoutConfirmingMessage": "Are You Sure? You Want To Logout",
     "users": "Users",
     "subscriptions": "Subscription history",
     "addUser": "Add New User",
@@ -1218,6 +1218,8 @@
   },
 
   "PLACEHOLDERS": {
+    "video_limit": "Video Limit (By Seconds)",
+    "distance": "Search Scope",
     "map_location": "Location on Map",
     "FinancialOrders": "Financial reports for orders",
     "financialpack": "Financial reports for packages",
@@ -1451,6 +1453,7 @@
     "downloadApp": "Total app downloads",
     "editPassword": "Edit Password",
     "contents": "Content",
+    "attachment": "Attachment",
     "contentAr": "Arabic Content",
     "contentEn": "English Content",
     "taxPercentage": "Tax Percentage (%)",
@@ -2004,6 +2007,9 @@
   },
 
   "VALIDATION": {
+    "media": "Media is Required (Image or Video)",
+    "video_limit": "Video Limit Field is Required",
+    "distance": "Search Scope Field is Required",
     "loginSuccess": "Logged In Successfully",
     "loginFailed": "Wrong Login Data",
     "name": "Name Field Can't Be Empty",

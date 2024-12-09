@@ -2,7 +2,7 @@
   <div class="crud_form_wrapper">
     <!-- Start:: Title -->
     <div class="form_title_wrapper">
-      <h4>{{ $t("TITLES.show_offer") }}</h4>
+      <h4>{{ $t("SIDENAV.ads.edit") }}</h4>
     </div>
     <div class="col-12 text-end">
       <v-btn @click="$router.go(-1)" style="color: #1F92D6">
@@ -17,12 +17,12 @@
         <div class="row">
           <base-image-upload-input
             col="12"
-            :identifier="data.image.path.endsWith('.mp4') ? 'video' : 'image'"
-            :placeholder="$t('PLACEHOLDERS.contents')"
+            :identifier="data.media?.path.endsWith('.mp4') ? 'video' : 'image'"
+            :placeholder="$t('PLACEHOLDERS.attachment')"
             @selectImage="selectImage"
             required
             :acceptVideo="true"
-            :preSelectedImage="data.image.path"
+            :preSelectedImage="data.media?.path"
           />
           
           <!-- Start:: Name Input -->
@@ -117,7 +117,7 @@ export default {
 
       // Start:: Data Collection To Send
       data: {
-        image: {
+        media: {
           path: null,
           file: null,
         },
@@ -126,7 +126,6 @@ export default {
         active: true,
         publish_start_date: null,
         publish_end_date: null,
-        media: null,
         media_type: null,
       },
       // End:: Data Collection To Send
@@ -140,7 +139,7 @@ export default {
 
   methods: {
     selectImage(selectedImage) {
-      this.data.image = selectedImage;
+      this.data.media = selectedImage;
     },
 
     disabledDate(current) {
@@ -206,13 +205,13 @@ export default {
 
       REQUEST_DATA.append("name[en]", this.data.nameEn);
 
-      if (this.data.image.file) {
-        REQUEST_DATA.append("image", this.data.image.file); // Append the file to the FormData
+      if (this.data.media.file) {
+        REQUEST_DATA.append("media", this.data.media.file); // Append the file to the FormData
         // REQUEST_DATA.append("image_type", this.file); // Append the file to the FormData
       }
 
-      REQUEST_DATA.append("start_at", this.data.publish_start_date);
-      REQUEST_DATA.append("end_at", this.data.publish_end_date);
+      REQUEST_DATA.append("start_date", this.data.publish_start_date);
+      REQUEST_DATA.append("end_date", this.data.publish_end_date);
       REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
       // REQUEST_DATA.append("__method", "PUT");
       REQUEST_DATA.append("_method", "PUT");
@@ -221,7 +220,7 @@ export default {
       try {
         await this.$axios({
           method: "POST",
-          url: `advertisements/${this.$route.params.id}`,
+          url: `sliders/${this.$route.params.id}`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
@@ -239,14 +238,14 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `advertisements/${this.$route.params.id}`,
+          url: `sliders/${this.$route.params.id}`,
         });
-        this.data.image.path = res.data.data.Advertisment.image;
-        this.data.nameAr = res.data.data.Advertisment.name_ar;
-        this.data.nameEn = res.data.data.Advertisment.name_en;
-        this.data.publish_start_date = res.data.data.Advertisment.start_at;
-        this.data.publish_end_date = res.data.data.Advertisment.end_at;
-        this.data.active = res.data.data.Advertisment.is_active;
+        this.data.nameAr = res.data.data.Slider.name_ar;
+        this.data.nameEn = res.data.data.Slider.name_en;
+        this.data.publish_start_date = res.data.data.Slider.start_date;
+        this.data.publish_end_date = res.data.data.Slider.end_date;
+        this.data.active = res.data.data.Slider.is_active;
+        this.data.media.path = res.data.data.Slider.media;
         // console.log(res.data.body.add_space)
       } catch (error) {
         this.loading = false;

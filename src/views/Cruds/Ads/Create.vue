@@ -120,7 +120,7 @@ export default {
 
       // Start:: Data Collection To Send
       data: {
-        image: {
+        media: {
           path: null,
           file: null,
         },
@@ -141,7 +141,7 @@ export default {
 
   methods: {
     selectImage(selectedImage) {
-      this.data.image = selectedImage;
+      this.data.media = selectedImage;
     },
 
     disabledDate(current) {
@@ -192,6 +192,10 @@ export default {
         this.isWaitingRequest = false;
         this.$message.error(this.$t("VALIDATION.endDate"));
         return;
+      } else if (!this.data.media) {
+        this.isWaitingRequest = false;
+        this.$message.error(this.$t("VALIDATION.media"));
+        return;
       } else {
         this.submitForm();
         return;
@@ -207,20 +211,20 @@ export default {
 
       REQUEST_DATA.append("name[en]", this.data.nameEn);
 
-      if (this.data.image.file) {
-        REQUEST_DATA.append("image", this.data.image.file); // Append the file to the FormData
+      if (this.data.media.file) {
+        REQUEST_DATA.append("media", this.data.media.file); // Append the file to the FormData
         // REQUEST_DATA.append("image_type", this.file); // Append the file to the FormData
       }
 
-      REQUEST_DATA.append("start_at", this.data.publish_start_date);
-      REQUEST_DATA.append("end_at", this.data.publish_end_date);
+      REQUEST_DATA.append("start_date", this.data.publish_start_date);
+      REQUEST_DATA.append("end_date", this.data.publish_end_date);
       REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
       // Start:: Append Request Data
 
       try {
         await this.$axios({
           method: "POST",
-          url: `advertisements`,
+          url: `sliders`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;

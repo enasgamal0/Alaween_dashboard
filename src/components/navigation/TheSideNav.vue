@@ -58,9 +58,9 @@
           :open-keys="openKeys"
           @openChange="onOpenChange"
           v-if="
-            $can('roles index', 'roles') ||
-            $can('permissions index', 'permissions') ||
-            $can('admins index', 'admins')
+            $can('role index', 'role') ||
+            $can('permission index', 'permission') ||
+            $can('admin index', 'admin')
           "
         >
           <a-sub-menu
@@ -163,7 +163,7 @@
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('users index', 'users')"
+        v-if="$can('user index', 'user')"
       >
         <router-link to="/users/all">
           <span class="route_icon">
@@ -185,7 +185,7 @@
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('categories index', 'categories')"
+        v-if="$can('category index', 'category')"
       >
         <router-link to="/main-categories/all">
           <span class="route_icon">
@@ -207,7 +207,7 @@
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('categories index', 'categories')"
+        v-if="$can('category index', 'category')"
       >
         <router-link to="/sub-categories/all">
           <span class="route_icon">
@@ -446,7 +446,7 @@
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('cities index', 'cities')"
+        v-if="$can('city index', 'city')"
       >
         <router-link to="/cities/all">
           <span class="route_icon">
@@ -556,7 +556,7 @@
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('advertisments index', 'advertisments')"
+        v-if="$can('slider index', 'slider')"
       >
         <router-link to="/Ads/all">
           <span class="route_icon">
@@ -600,7 +600,7 @@
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('settings edit', 'settings')"
+        v-if="$can('setting edit', 'setting')"
       >
         <router-link to="/app_settings">
           <span class="route_icon">
@@ -647,7 +647,7 @@
           mode="vertical"
           :open-keys="openKeys"
           @openChange="onOpenChange"
-          v-if="$can('settings create', 'settings')"
+          v-if="$can('setting create', 'setting')"
         >
           <a-sub-menu
             v-for="item in sideNavbarList"
@@ -813,8 +813,8 @@ export default {
               title: this.$t("SIDENAV.Roles.title"),
               route: "/roles/all",
               hasPermission:
-                this.$can("roles index", "roles") ||
-                this.$can("permissions index", "permissions"),
+                this.$can("role index", "role") ||
+                this.$can("permission index", "permission"),
             },
             {
               key: "admins",
@@ -831,13 +831,13 @@ export default {
           key: "users_control",
           title: this.$t("PLACEHOLDERS.manage_users"),
           icon: require("@/assets/media/icons/ui_icons/clients.svg"),
-          hasPermission: this.$can("users index", "users"),
+          hasPermission: this.$can("user index", "user"),
           children: [
             {
               key: "users",
               title: this.$t("PLACEHOLDERS.manage_all_users"),
               route: "/clients/all",
-              hasPermission: this.$can("users index", "users"),
+              hasPermission: this.$can("user index", "user"),
             },
           ],
         },
@@ -859,37 +859,31 @@ export default {
               key: "contact",
               title: this.$t("PLACEHOLDERS.contact_admins"),
               route: "/contact_settings",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: this.$can("setting create", "setting"),
             },
             {
               key: "AboutUs",
               title: this.$t("SIDENAV.AppContent.aboutUs"),
               route: "/app-content/about-us",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: this.$can("setting create", "setting"),
             },
             {
               key: "termsAndConditions",
               title: this.$t("SIDENAV.AppContent.termsAndConditions"),
               route: "/app-content/terms",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: this.$can("setting create", "setting"),
             },
             {
               key: "privacyPolicy",
               title: this.$t("SIDENAV.AppContent.privacyPolicy"),
               route: "/app-content/policy",
-              hasPermission: this.$can("settings create", "settings"),
-            },
-            {
-              key: "booking-terms",
-              title: this.$t("SIDENAV.Units.booking_condition"),
-              route: "/app-content/booking-terms",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: this.$can("setting create", "setting"),
             },
             {
               key: "delete-account",
               title: this.$t("PLACEHOLDERS.how_to_delete_account"),
               route: "/app-content/delete-account",
-              hasPermission: this.$can("settings create", "settings"),
+              hasPermission: this.$can("setting create", "setting"),
             },
           ],
         },

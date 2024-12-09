@@ -78,11 +78,11 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `settings?key=about_us`,
+          url: `settings?key=about_app`,
         });
         // Start:: Set Data
-        this.data.contentAr = res.data.data[0].value.ar;
-        this.data.contentEn = res.data.data[0].value.en;
+        this.data.contentAr = res.data.data[0].value?.description?.ar;
+        this.data.contentEn = res.data.data[0].value?.description?.en;
         // End:: Set Data
       } catch (error) {
         console.log(error.response.data.message);
@@ -113,9 +113,9 @@ export default {
     async submitForm() {
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
-      REQUEST_DATA.append("key", "about_us");
-      REQUEST_DATA.append("value[ar]", this.data.contentAr);
-      REQUEST_DATA.append("value[en]", this.data.contentEn);
+      REQUEST_DATA.append("key", "about_app");
+      REQUEST_DATA.append("value[description][ar]", this.data.contentAr);
+      REQUEST_DATA.append("value[description][en]", this.data.contentEn);
       // REQUEST_DATA.append("_method", "PUT");
 
       try {

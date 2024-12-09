@@ -22,46 +22,21 @@
             <div class="row justify-content-center align-items-center w-100">
               <!-- Start:: Name Input -->
               <base-input
-                col="4"
+                col="6"
                 type="text"
-                :placeholder="$t('PLACEHOLDERS.name')"
+                :placeholder="$t('SIDENAV.Cities.nametitle')"
                 v-model.trim="filterOptions.name"
               />
               <!-- End:: Name Input -->
 
               <!-- Start:: Status Input -->
               <base-select-input
-                col="4"
+                col="6"
                 :optionsList="activeStatuses"
                 :placeholder="$t('PLACEHOLDERS.status')"
                 v-model="filterOptions.is_active"
               />
               <!-- End:: Status Input -->
-
-              <!-- Start:: Area Input -->
-              <base-select-input
-                col="4"
-                :optionsList="areas"
-                :placeholder="$t('PLACEHOLDERS.area')"
-                v-model="filterOptions.area_id"
-              />
-              <!-- End:: Status Input -->
-
-              <base-picker-input
-                col="4"
-                type="date"
-                :placeholder="$t('PLACEHOLDERS.startDate')"
-                v-model.trim="filterOptions.from_date"
-              />
-              <!-- End:: Start Date Input -->
-
-              <!-- Start:: End Date Input -->
-              <base-picker-input
-                col="4"
-                type="date"
-                :placeholder="$t('PLACEHOLDERS.endDate')"
-                v-model.trim="filterOptions.to_date"
-              />
             </div>
 
             <div class="btns_wrapper">
@@ -97,7 +72,7 @@
 
         <div
           class="title_route_wrapper"
-          v-if="$can('cities create', 'cities')"
+          v-if="$can('city create', 'city')"
         >
           <router-link to="/cities/create">
             {{ $t("TITLES.addCity") }}
@@ -118,6 +93,9 @@
         :items-per-page="paginations.items_per_page"
         hide-default-footer
       >
+        <template v-slot:item.serial_number="{ item }">
+          <div class="serial-number">{{ item.serial_number }}</div>
+        </template>
         <!-- Start:: No Data State -->
         <template v-slot:no-data>
           {{ $t("TABLES.noData") }}
@@ -131,7 +109,7 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('cities activate', 'cities')"
+            v-if="$can('city activate', 'city')"
           >
             <v-switch
               class="mt-2"
@@ -149,7 +127,7 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('cities delete', 'cities')"
+              v-if="$can('city delete', 'city')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.delete") }}</span>
@@ -160,7 +138,7 @@
             </a-tooltip>
             <a-tooltip
               placement="bottom"
-              v-if="$can('cities edit', 'cities')"
+              v-if="$can('city edit', 'city')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.edit") }}</span>
@@ -171,13 +149,10 @@
                 <i class="fal fa-edit"></i>
               </button>
             </a-tooltip>
-            <a-tooltip placement="bottom" v-if="$can('cities show', 'cities')">
+            <a-tooltip placement="bottom" v-if="$can('city show', 'city')">
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
               </template>
-              <button class="btn_show" @click="showItem(item)">
-                <i class="fal fa-eye"></i>
-              </button>
             </a-tooltip>
 
             <template v-else>
@@ -301,10 +276,7 @@ export default {
       filterFormIsActive: false,
       filterOptions: {
         name: null,
-        area_id: null,
-        is_active: null,
-        from_date: null,
-        to_date: null,
+        is_active: null
       },
       // End:: Filter Data
 
@@ -313,19 +285,13 @@ export default {
       tableHeaders: [
         {
           text: this.$t("TABLES.Admins.serialNumber"),
-          value: "id",
+          value: "serial_number",
           align: "center",
           sortable: false,
         },
         {
-          text: this.$t("PLACEHOLDERS.name"),
+          text: this.$t("SIDENAV.Cities.nametitle"),
           value: "name",
-          sortable: false,
-          align: "center",
-        },
-        {
-          text: this.$t("PLACEHOLDERS.area"),
-          value: "arae.name",
           sortable: false,
           align: "center",
         },
@@ -404,10 +370,7 @@ export default {
     },
     async resetFilter() {
       this.filterOptions.name = null;
-      this.filterOptions.area_id = null;
       this.filterOptions.is_active = null;
-      this.filterOptions.from_date = null;
-      this.filterOptions.to_date = null;
 
       if (this.$route.query.page !== "1") {
         await this.$router.push({ path: "/cities/all", query: { page: 1 } });
@@ -439,14 +402,14 @@ export default {
           params: {
             page: this.paginations.current_page,
             name: this.filterOptions.name,
-            area_id: this.filterOptions.area_id?.id,
             is_active: this.filterOptions.is_active?.value,
-            "created_at[0]": this.filterOptions.from_date,
-            "created_at[1]": this.filterOptions.to_date,
           },
         });
         this.loading = false;
-        this.tableRows = res.data.data;
+        this.tableRows = res.data.data.map((item, index) => {
+          item.serial_number = (this.paginations.current_page - 1) * this.paginations.items_per_page + index + 1;
+          return item;
+        });
         // console.log(res.data.data.items?.id.city.name);
         this.paginations.last_page = res.data.meta.last_page;
         this.paginations.items_per_page = res.data.meta.per_page;
@@ -475,7 +438,7 @@ export default {
       try {
         await this.$axios({
           method: "POST",
-          url: `cities/activate/${item.id}`,
+          url: `cities/${item.id}/activate`,
           data: REQUEST_DATA,
         });
         this.setTableRows();
@@ -490,9 +453,6 @@ export default {
     // ===== Start:: End
     editItem(item) {
       this.$router.push({ path: `/cities/edit/${item.id}` });
-    },
-    showItem(item) {
-      this.$router.push({ path: `/cities/show/${item.id}` });
     },
     // ===== End:: End
 
