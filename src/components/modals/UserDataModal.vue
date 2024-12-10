@@ -281,7 +281,7 @@ export default {
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
       if (this.data.image.file) {
-        REQUEST_DATA.append("avatar", this.data.image.file);
+        REQUEST_DATA.append("image", this.data.image.file);
       }
       REQUEST_DATA.append("name", this.data.name);
       REQUEST_DATA.append("mobile", this.data.phone);
@@ -305,9 +305,9 @@ export default {
         this.isWaitingRequest = false;
         this.$message.success(this.$t("MESSAGES.editedSuccessfully"));
         this.setAuthenticatedUserData({
-          name: res.data.data.user.user.name,
-          email: res.data.data.user.user.email,
-          image: res.data.data.user.user.image,
+          name: res.data.data.user.name,
+          email: res.data.data.user.email,
+          image: res.data.data.user.image,
         });
         this.toggleModal();
         // this.logout();

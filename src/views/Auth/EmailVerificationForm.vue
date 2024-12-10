@@ -238,7 +238,7 @@ export default {
           this.isWaitingRequest = false;
           localStorage.setItem(
             "alaween_admin_dashboard_reset_pass_token",
-            res.data.access_token
+            res.data.data.access_token
           );
           this.$message.success(this.$t("MESSAGES.verifiedSuccessfully"));
           this.clearFormInputs();
