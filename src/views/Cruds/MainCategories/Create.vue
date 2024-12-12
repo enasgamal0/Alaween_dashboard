@@ -1,12 +1,13 @@
 <template>
   <div class="crud_form_wrapper">
-    <!-- Start:: Title -->
     <div class="form_title_wrapper">
       <h4>{{ $t("PLACEHOLDERS.add_main_section") }}</h4>
     </div>
-    <!-- End:: Title -->
-
-    <!-- Start:: Single Step Form Content -->
+    <div class="col-12 text-end">
+      <v-btn @click="$router.go(-1)" style="color: #1F92D6">
+        <i class="fas fa-backward"></i>
+      </v-btn>
+    </div>
     <div class="single_step_form_content_wrapper">
       <form @submit.prevent="validateFormInputs">
         <div class="row">
@@ -17,7 +18,6 @@
             @selectImage="selectImage"
           />
 
-          <!-- Start:: Ar Name Input -->
           <base-input
             col="6"
             type="text"
@@ -25,9 +25,7 @@
             v-model.trim="data.nameAr"
             required
           />
-          <!-- End:: Ar Name Input -->
 
-          <!-- Start:: En Name Input -->
           <base-input
             col="6"
             type="text"
@@ -35,31 +33,51 @@
             v-model.trim="data.nameEn"
             required
           />
-          <!-- End:: En Name Input -->
 
-          <!-- Start:: description_in_arabic Input -->
-          <base-input
-            col="6"
-            type="textarea"
-            cols="6"
-            :placeholder="$t('PLACEHOLDERS.description_in_arabic')"
-            v-model.trim="data.descAr"
-            required
-          />
-          <!-- End:: description_in_arabic Input -->
+          <div class="row">
+            <div class="row justify-content-center">
+              <div class="col-l2">
+                <div class="add_another" @click="addRow">
+                  <i class="fas fa-plus"></i>
+                </div>
+              </div>
+              <div
+                class="col-12"
+                v-for="(item, index) in data.fields"
+                :key="'l' + index"
+              >
+                <div class="item d-flex flex-wrap align-items-center">
+                  <base-input
+                    col="4"
+                    class="w-100"
+                    type="text"
+                    :placeholder="$t('PLACEHOLDERS.field_name_ar')"
+                    v-model.trim="item.nameAr"
+                  />
+                  <base-input
+                    col="4"
+                    class="w-100"
+                    type="text"
+                    :placeholder="$t('PLACEHOLDERS.field_name_en')"
+                    v-model.trim="item.nameEn"
+                  />
+                  <base-select-input
+                    col="3"
+                    class="w-100"
+                    :optionsList="fieldTypes"
+                    :placeholder="$t('PLACEHOLDERS.field_type')"
+                    v-model="item.type"
+                  />
+                  <div class="all_actions" v-if="data.fields?.length > 1">
+                    <span class="add_another" @click="removeRow(index)">
+                      <i class="fas fa-minus"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <!-- Start:: description_in_english Input -->
-          <base-input
-            col="6"
-            type="textarea"
-            cols="6"
-            :placeholder="$t('PLACEHOLDERS.description_in_english')"
-            v-model.trim="data.descEn"
-            required
-          />
-          <!-- End:: description_in_english Input -->
-
-          <!-- Start:: Deactivate Switch Input -->
           <div class="input_wrapper switch_wrapper my-5">
             <v-switch
               color="green"
@@ -72,9 +90,7 @@
               hide-details
             ></v-switch>
           </div>
-          <!-- End:: Deactivate Switch Input -->
 
-          <!-- Start:: Submit Button Wrapper -->
           <div class="btn_wrapper">
             <base-button
               class="mt-2"
@@ -84,25 +100,40 @@
               :disabled="isWaitingRequest"
             />
           </div>
-          <!-- End:: Submit Button Wrapper -->
         </div>
       </form>
     </div>
-    <!-- END:: Single Step Form Content -->
   </div>
 </template>
-
 <script>
 export default {
   name: "CreateArea",
 
+  computed: {
+    fieldTypes() {
+      return [
+        {
+          id: 0,
+          name: this.$t("PLACEHOLDERS.text"),
+          value: "text",
+        },
+        {
+          id: 1,
+          name: this.$t("PLACEHOLDERS.attachments"),
+          value: "file",
+        },
+        {
+          id: 2,
+          name: this.$t("PLACEHOLDERS.ddl"),
+          value: "dropdown",
+        },
+      ];
+    },
+  },
+
   data() {
     return {
-      // Start:: Loader Control Data
       isWaitingRequest: false,
-      // End:: Loader Control Data
-
-      // Start:: Data Collection To Send
       data: {
         image: {
           path: null,
@@ -110,38 +141,36 @@ export default {
         },
         nameAr: null,
         nameEn: null,
-        descAr: null,
-        descEn: null,
-        payment_status: null,
         active: true,
+        fields: [
+          {
+            nameAr: "",
+            nameEn: "",
+            type: "text",
+          },
+        ],
       },
-
-      // End:: Data Collection To Send
     };
   },
 
-  computed: {
-    paymentStatus() {
-      return [
-        {
-          id: 1,
-          name: this.$t("PLACEHOLDERS.paid"),
-          value: 1,
-        },
-        {
-          id: 2,
-          name: this.$t("PLACEHOLDERS.unpaid"),
-          value: 0,
-        },
-      ];
-    },
-  },
-
   methods: {
+    addRow() {
+      // Add new field object with index for proper binding
+      this.data?.fields.push({
+        nameAr: "",
+        nameEn: "",
+        type: "text",
+      });
+    },
+
+    removeRow(index) {
+      this.data?.fields.splice(index, 1);
+    },
+
     selectImage(selectedImage) {
       this.data.image = selectedImage;
     },
-    // Start:: validate Form Inputs
+
     validateFormInputs() {
       this.isWaitingRequest = true;
 
@@ -158,40 +187,65 @@ export default {
         return;
       }
     },
-    // End:: validate Form Inputs
 
-    // Start:: Submit Form
     async submitForm() {
       const REQUEST_DATA = new FormData();
 
+      // Append the image if selected
       if (this.data.image.file) {
-        REQUEST_DATA.append("image", this.data.image.file);
+        REQUEST_DATA.append("logo", this.data.image.file);
       }
-      // Start:: Append Request Data
       REQUEST_DATA.append("name[ar]", this.data.nameAr);
       REQUEST_DATA.append("name[en]", this.data.nameEn);
-      REQUEST_DATA.append("description[ar]", this.data.descAr);
-      REQUEST_DATA.append("description[en]", this.data.descEn);
       REQUEST_DATA.append("is_active", +this.data.active);
-      // Start:: Append Request Data
+
+      // Append fields dynamically based on the added rows
+      this.data?.fields.forEach((item, index) => {
+        REQUEST_DATA.append(
+          `categories[field_name][ar][${index}]`,
+          item.nameAr
+        );
+        REQUEST_DATA.append(
+          `categories[field_name][en][${index}]`,
+          item.nameEn
+        );
+        REQUEST_DATA.append(
+          `categories[field_name][type][${index}]`,
+          item.type?.value
+        );
+      });
 
       try {
         await this.$axios({
           method: "POST",
-          url: `categories`,
+          url: "categories",
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
         this.$message.success(this.$t("MESSAGES.addedSuccessfully"));
-        this.$router.push({ path: "/main-categories/all" });
+        this.$router.push({ path: "/categories/all" });
       } catch (error) {
         this.isWaitingRequest = false;
         this.$message.error(error.response.data.message);
       }
     },
-    // End:: Submit Form
   },
-
-  async created() {},
 };
 </script>
+<style lang="scss">
+.add_another {
+  border: none;
+  padding: 8px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--light_gray_clr);
+  border-radius: 50%;
+  font-size: 18px;
+  color: var(--light_gray_clr);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: auto;
+}
+</style>

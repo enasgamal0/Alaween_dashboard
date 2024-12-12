@@ -404,7 +404,7 @@ export default {
         },
         {
           text: this.$t("TABLES.ContactMessages.phone"),
-          value: "mobile",
+          value: "phone",
           align: "center",
           width: "140",
           sortable: false,
@@ -423,6 +423,13 @@ export default {
           sortable: false,
         },
         {
+          text: this.$t("TABLES.ContactMessages.type"),
+          value: "type_translated",
+          align: "center",
+          width: "80",
+          sortable: false,
+        },
+        {
           text: this.$t("TABLES.ContactMessages.message"),
           value: "message",
           align: "center",
@@ -433,14 +440,7 @@ export default {
           text: this.$t("TABLES.ContactMessages.replay"),
           value: "reply",
           align: "center",
-          width: "1l20",
-          sortable: false,
-        },
-        {
-          text: this.$t("TABLES.ContactMessages.type"),
-          value: "type_message",
-          align: "center",
-          width: "80",
+          width: "120",
           sortable: false,
         },
         {
@@ -533,7 +533,7 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: "contacts",
+          url: "contact-us",
           params: {
             page: this.paginations.current_page,
             name: this.filterOptions.name,
@@ -581,13 +581,13 @@ export default {
       // REQUEST_DATA.append("_method", 'PUT');
       const REQUEST_DATA = {
         reply: this.messageReplay,
-        _method: "put"
+        _method: "post"
       };
 
       try {
         await this.$axios({
           method: "POST",
-          url: `contacts/reply/${this.itemToSendReplay.id}`,
+          url: `contact-us/${this.itemToSendReplay.id}/reply`,
           data: REQUEST_DATA,
         });
         this.$message.success(this.$t("MESSAGES.sentSuccessfully"));

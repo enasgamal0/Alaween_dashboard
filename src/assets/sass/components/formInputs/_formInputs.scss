@@ -641,7 +641,8 @@ form {
                   }
 
                   &.multiselect__option--selected {
-                    color: var(--main_theme_clr);
+                    // color: var(--main_theme_clr);
+                    color: black;
                   }
                 }
               }

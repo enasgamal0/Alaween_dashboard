@@ -200,11 +200,11 @@ import ShowCategories from "../views/Cruds/MainCategories/Show.vue";
 // ============== End:: MainCategories Routes
 
 // ============== Start:: SubCategories Routes
-import SubCategoriesHome from "../views/Cruds/SubCategories/Home.vue";
-import AllSubCategories from "../views/Cruds/SubCategories/ShowAll.vue";
-import CreateSubCategories from "../views/Cruds/SubCategories/Create.vue";
-import EditSubCategories from "../views/Cruds/SubCategories/Edit.vue";
-import ShowSubCategories from "../views/Cruds/SubCategories/Show.vue";
+// import SubCategoriesHome from "../views/Cruds/SubCategories/Home.vue";
+// import AllSubCategories from "../views/Cruds/SubCategories/ShowAll.vue";
+// import CreateSubCategories from "../views/Cruds/SubCategories/Create.vue";
+// import EditSubCategories from "../views/Cruds/SubCategories/Edit.vue";
+// import ShowSubCategories from "../views/Cruds/SubCategories/Show.vue";
 // ============== End:: SubCategories Routes
 // ============== Start:: Coupons Routes
 import CouponsHome from "../views/Cruds/Coupons/Home.vue";
@@ -315,8 +315,8 @@ const routes = [
             meta: {
               middleware: [auth],
               requiresPermission: {
-                action: "contacts index",
-                subject: "contacts",
+                action: "contactus index",
+                subject: "contactus",
               },
             },
           },
@@ -327,8 +327,8 @@ const routes = [
             meta: {
               middleware: [auth],
               requiresPermission: {
-                action: "contacts show",
-                subject: "contacts",
+                action: "contactus show",
+                subject: "contactus",
               },
             },
           },
@@ -1488,7 +1488,7 @@ const routes = [
 
       // Start:: Categories Routes Config
       {
-        path: "/main-categories",
+        path: "/categories",
         name: "CategoriesHome",
         component: CategoriesHome,
         meta: {
@@ -1550,62 +1550,62 @@ const routes = [
       // End:: Categories Routes Config
 
       // Start:: sub Categories Routes Config
-      {
-        path: "/sub-categories",
-        name: "CategoriesHome",
-        component: SubCategoriesHome,
-        meta: {
-          middleware: [auth],
-        },
-        children: [
-          {
-            path: "all",
-            name: "AllSubCategories",
-            component: AllSubCategories,
-            meta: {
-              middleware: [auth],
-              requiresPermission: {
-                action: "categories index",
-                subject: "categories",
-              },
-            },
-          },
-          {
-            path: "create",
-            name: "CreateSubCategories",
-            component: CreateSubCategories,
-            meta: {
-              middleware: [auth],
-              requiresPermission: {
-                action: "categories index",
-                subject: "categories",
-              },
-            },
-          },
-          {
-            path: "edit/:id",
-            name: "EditSubCategories",
-            component: EditSubCategories,
-            props: true,
-            meta: {
-              middleware: [auth],
-            },
-          },
-          {
-            path: "show/:id",
-            name: "ShowSubCategories",
-            component: ShowSubCategories,
-            props: true,
-            meta: {
-              middleware: [auth],
-              requiresPermission: {
-                action: "categories index",
-                subject: "categories",
-              },
-            },
-          },
-        ],
-      },
+      // {
+      //   path: "/sub-categories",
+      //   name: "CategoriesHome",
+      //   component: SubCategoriesHome,
+      //   meta: {
+      //     middleware: [auth],
+      //   },
+      //   children: [
+      //     {
+      //       path: "all",
+      //       name: "AllSubCategories",
+      //       component: AllSubCategories,
+      //       meta: {
+      //         middleware: [auth],
+      //         requiresPermission: {
+      //           action: "categories index",
+      //           subject: "categories",
+      //         },
+      //       },
+      //     },
+      //     {
+      //       path: "create",
+      //       name: "CreateSubCategories",
+      //       component: CreateSubCategories,
+      //       meta: {
+      //         middleware: [auth],
+      //         requiresPermission: {
+      //           action: "categories index",
+      //           subject: "categories",
+      //         },
+      //       },
+      //     },
+      //     {
+      //       path: "edit/:id",
+      //       name: "EditSubCategories",
+      //       component: EditSubCategories,
+      //       props: true,
+      //       meta: {
+      //         middleware: [auth],
+      //       },
+      //     },
+      //     {
+      //       path: "show/:id",
+      //       name: "ShowSubCategories",
+      //       component: ShowSubCategories,
+      //       props: true,
+      //       meta: {
+      //         middleware: [auth],
+      //         requiresPermission: {
+      //           action: "categories index",
+      //           subject: "categories",
+      //         },
+      //       },
+      //     },
+      //   ],
+      // },
       // End:: sub Categories Routes Config
 
       // Start:: management Routes Config

@@ -3316,7 +3316,8 @@ form
   .multiselect__content
   .multiselect__element
   .multiselect__option.multiselect__option--selected {
-  color: var(--main_theme_clr);
+    color: black;
+  /* color: var(--main_theme_clr); */
 }
 form .input_wrapper.top_label.password_input_wrapper {
   background-color: var(--theme_main_bg_clr);

@@ -76,7 +76,7 @@
             <i class="fal fa-search"></i>
           </button>
         </div>
-        <div class="title_route_wrapper" v-if="$can('roles index', 'roles')">
+        <div class="title_route_wrapper" v-if="$can('role index', 'role')">
           <router-link to="/roles/create">
             {{ $t("BUTTONS.addRole") }}
           </router-link>
@@ -179,7 +179,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="item.id !== 1 && $can('roles edit', 'roles')"
+              v-if="item.id !== 1 && $can('role edit', 'role')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.edit") }}</span>
@@ -191,7 +191,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="item.id !== 1 && $can('roles delete', 'roles')"
+              v-if="item.id !== 1 && $can('role delete', 'role')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.delete") }}</span>
@@ -201,7 +201,7 @@
               </button>
             </a-tooltip>
 
-            <template v-if="$can('roles activate', 'roles') && item.id !== 1">
+            <template v-if="$can('role activate', 'role') && item.id !== 1">
               <a-tooltip placement="bottom" v-if="!item.is_active">
                 <template slot="title">
                   <span>{{ $t("BUTTONS.activate") }}</span>

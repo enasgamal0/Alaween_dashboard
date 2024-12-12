@@ -187,10 +187,10 @@
         @click="$emit('fireToggleNavDrawerEmit')"
         v-if="$can('category index', 'category')"
       >
-        <router-link to="/main-categories/all">
+        <router-link to="/categories/all">
           <span class="route_icon">
             <img
-              src="@/assets/media/icons/ui_icons/bill.svg"
+              src="@/assets/media/icons/ui_icons/folder.png"
               alt="icon"
               width="40"
               height="40"
@@ -204,7 +204,7 @@
       <!-- End:: main_sections Route -->
 
       <!-- Start:: sub_sections Route -->
-      <div
+      <!-- <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
         v-if="$can('category index', 'category')"
@@ -222,7 +222,7 @@
             {{ $t("PLACEHOLDERS.sub_sections") }}
           </span>
         </router-link>
-      </div>
+      </div> -->
       <!-- End:: sub_sections Route -->
 
       <!-- Start:: products Route -->
@@ -681,11 +681,11 @@
       </div>
       <!-- End:: Side Nav Routes -->
 
-      <!-- Start:: contacts Route -->
+      <!-- Start:: contactus Route -->
       <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
-        v-if="$can('contacts index', 'contacts')"
+        v-if="$can('contactus index', 'contactus')"
       >
         <router-link to="/contact-messages/all">
           <span class="route_icon">
@@ -701,7 +701,7 @@
           </span>
         </router-link>
       </div>
-      <!-- End:: contacts Route -->
+      <!-- End:: contactus Route -->
 
       <div class="side_routes_wrapper">
         <a-menu style="width: 100%" mode="inline">
@@ -853,7 +853,7 @@ export default {
             //   key: "contact-messages",
             //   title: this.$t("SIDENAV.ContactMessages.title"),
             //   route: "/contact-messages/all",
-            //   hasPermission: this.$can("contacts index", "contacts"),
+            //   hasPermission: this.$can("contactus index", "contactus"),
             // },
             {
               key: "contact",

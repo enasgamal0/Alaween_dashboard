@@ -308,14 +308,14 @@
     },
     "catogery": {
       "title": "Management of unit sections",
-      "name": "Name of main section",
-      "body": "Main Section",
-      "image": "image of the main section",
+      "name": "Name of section",
+      "body": "Section",
+      "image": "image of the section",
       "nameAr": "Name of the department in Arabic",
       "nameEn": "Department name in English",
-      "add": "Add a new main section",
-      "show": "Display main section data",
-      "edit": "Edit the data of the main section"
+      "add": "Add a new section",
+      "show": "Display section data",
+      "edit": "Edit the data of the section"
     },
     "adventages": {
       "title": "Feature Management",
@@ -380,7 +380,7 @@
       "unitName": "Unit Name",
       "orderStatus": "Order Status",
       "created_at": "Order Creation Date",
-      "mainCat": "Main Category"
+      "mainCat": "Category"
     },
     "OrderData": {
       "arriveDate": "Arrival Date",
@@ -413,7 +413,7 @@
       "insurance": "Insurance Amount",
       "providerData": "Host Details",
       "address": "Location",
-      "mainCat": "Main Category of the Unit",
+      "mainCat": "Category of the Unit",
       "nightPriceAfterDis": "Night Price After Discount",
       "Distrect": "Area",
       "roomsNum": "Number of Rooms",
@@ -438,7 +438,7 @@
       "catogery_unit": "unit section",
       "user_name": "hostname",
       "user_mobile": "Host's mobile number",
-      "main_category": "The main section of the module",
+      "main_category": "The section of the module",
       "catogries": "units",
       "show": "View unit details",
       "category_desc": "Unit description",
@@ -515,7 +515,7 @@
     },
     "alaween": {
       "title": "Unit Name",
-      "main_category": "Main Category",
+      "main_category": "Category",
       "status_unit": "Unit Status",
       "price_night": "Nightly Price",
       "area": "Area",
@@ -572,7 +572,7 @@
       "type_order": "Order Type",
       "name_client": "Client Name",
       "phone_client": "Client Mobile Number",
-      "category": "Main Category",
+      "category": "Category",
       "name_unit": "Unit Name",
       "status_order": "Order Status",
       "data_order": "Order Creation Date"
@@ -1331,12 +1331,12 @@
     "rejictionMessage": "Request will be Rejected",
     "impular": "Employee",
     "orderCode": "Item Code",
-    "mainC": "Main Category",
+    "mainC": "Category",
     "subC": "Subcategory",
     "productFunc": "Available Actions on Each Item",
     "quantatyWanted": "Requested Quantity of Item",
 
-    "mainCat": "Main Category of the Product",
+    "mainCat": "Category of the Product",
     "subCats": "Subcategory of the Product",
     "mostPaid": "High in Demand?",
     "quantaty": "Available Quantity",
@@ -1366,7 +1366,7 @@
     "pdf": "Electronic invoice",
     "Rate": "Client Rate",
     "show_chat": "Chat",
-    "main_sections": "Main Category",
+    "main_sections": "Category",
     "sub_sections": "Sub Category",
     "created_at": "Creation date",
     "sender_name": "Client Name",
@@ -1428,6 +1428,7 @@
     "user": "User",
     "client": "Client",
     "additionalFile": "Additional File",
+    "attachments": "Attachments",
     "drivers": "Drivers",
     "comment": "Comment",
     "personalImage": "Personal Image",
@@ -1501,7 +1502,7 @@
     "occasions_update": "update occasion",
     "occasions_show": "show occasion",
     "name_admin": "service admin name",
-    "main_category": "main category",
+    "main_category": "Category",
     "store_address": "Store Address",
     "starting_price_reservation": "starting price of the reservation",
     "price_after_discount": "Price After Discount",
@@ -1667,12 +1668,16 @@
 
     "additional_field_type": "Additional Field Type",
     "textbox": "TextBox",
+    "text": "Text",
+    "ddl": "DropDown List",
     "numberbox": "NumberBox",
     "textarea": "Textarea",
     "checkbox": "Checkbox",
     "Radio_Button": "Radio Button",
-    "drop_down": "DropDown List",
-
+    "drop_down": "Dropdown List",
+    "field_name_ar": "Field Name (AR)",
+    "field_name_en": "Field Name (EN)",
+    "field_type": "Field Type",
     "control_admins": "Control admins",
     "admins": "Service admins",
     "show_admin": "View service admin data",
@@ -1812,7 +1817,7 @@
     "add_new_section": "Add New Section",
     "view_section_data": "View Section Data",
     "edit_section_data": "Edit Section Data",
-    "section_image": "Section Image",
+    "section_image": "Section Image (Logo)",
     "faq": "Frequently Asked Questions",
     "question_text": "Question Text",
     "answer_text": "Answer Text",
@@ -1948,11 +1953,11 @@
     "total_platform_profit": "Total Platform Profit",
     "total_provider_profit": "Total Provider Profit",
 
-    "add_main_section": "Add Main Section",
+    "add_main_section": "Add Section",
 
-    "edit_main_section": "Edit Main Section",
+    "edit_main_section": "Edit Section",
 
-    "show_main_section": "Show Main Section",
+    "show_main_section": "Show Section",
 
     "add_sub_section": "Add Subsection",
 

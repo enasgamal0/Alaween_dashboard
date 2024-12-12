@@ -76,9 +76,9 @@
         </div>
         <div
           class="title_route_wrapper"
-          v-if="$can('categories create', 'categories')"
+          v-if="$can('category create', 'category')"
         >
-          <router-link to="/main-categories/create">
+          <router-link to="/categories/create">
             {{ $t("PLACEHOLDERS.add_main_section") }}
           </router-link>
         </div>
@@ -119,7 +119,7 @@
             class="activation"
             dir="ltr"
             style="z-index: 1"
-            v-if="$can('categories activate', 'categories')"
+            v-if="$can('category activate', 'category')"
           >
             <v-switch
               class="mt-2"
@@ -146,7 +146,7 @@
           <div class="actions">
             <a-tooltip
               placement="bottom"
-              v-if="$can('categories show', 'categories')"
+              v-if="$can('category show', 'category')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.show") }}</span>
@@ -158,7 +158,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('categories edit', 'categories')"
+              v-if="$can('category edit', 'category')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.edit") }}</span>
@@ -170,7 +170,7 @@
 
             <a-tooltip
               placement="bottom"
-              v-if="$can('categories delete', 'categories')"
+              v-if="$can('category delete', 'category')"
             >
               <template slot="title">
                 <span>{{ $t("BUTTONS.delete") }}</span>
@@ -304,17 +304,17 @@ export default {
           align: "center",
         },
         {
-          text: this.$t("PLACEHOLDERS.created_at"),
-          value: "created_at",
-          sortable: false,
-          align: "center",
-        },
-        {
           text: this.$t("PLACEHOLDERS.status"),
           value: "is_active",
           align: "center",
           sortable: false,
           width: "120",
+        },
+        {
+          text: this.$t("PLACEHOLDERS.created_at"),
+          value: "created_at",
+          sortable: false,
+          align: "center",
         },
         {
           text: this.$t("TABLES.Admins.actions"),
@@ -361,7 +361,7 @@ export default {
     async submitFilterForm() {
       if (this.$route.query.page !== "1") {
         await this.$router.push({
-          path: "/main-categories/all",
+          path: "/categories/all",
           query: { page: 1 },
         });
       }
@@ -372,7 +372,7 @@ export default {
       this.filterOptions.status = null;
       if (this.$route.query.page !== "1") {
         await this.$router.push({
-          path: "/main-categories/all",
+          path: "/categories/all",
           query: { page: 1 },
         });
       }
@@ -402,7 +402,7 @@ export default {
           params: {
             page: this.paginations.current_page,
             name: this.filterOptions.name,
-            status: this.filterOptions.status?.value,
+            is_active: this.filterOptions.status?.value,
           },
         });
         this.loading = false;
@@ -420,10 +420,10 @@ export default {
     // ==================== Start:: Crud ====================
     // ===== Start:: Edit
     editItem(item) {
-      this.$router.push({ path: `/main-categories/edit/${item.id}` });
+      this.$router.push({ path: `/categories/edit/${item.id}` });
     },
     showItem(item) {
-      this.$router.push({ path: `/main-categories/show/${item.id}` });
+      this.$router.push({ path: `/categories/show/${item.id}` });
     },
     // ===== End:: Edit
 
@@ -456,10 +456,10 @@ export default {
       try {
         let response = await this.$axios({
           method: "POST",
-          url: `categories/activate/${item.id}`,
+          url: `categories/${item.id}/activate`,
         });
         this.setTableRows();
-        this.$message.success(response.data.message);
+        this.$message.success(this.$t("MESSAGES.changedSuccessfully"));
       } catch (error) {
         this.$message.error(error.response.data.message);
       }

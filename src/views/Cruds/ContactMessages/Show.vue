@@ -155,7 +155,7 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `contacts/${this.$route.params.id}`,
+          url: `contact-us/${this.$route.params.id}`,
         });
         this.data.sender_name = res.data.data.Contact.name;
         this.data.sender_phone = res.data.data.Contact.mobile;
@@ -185,7 +185,7 @@ export default {
         this.isWaitingRequest = true;
         await this.$axios({
           method: "POST",
-          url: `contacts/reply/${this.$route.params.id}`,
+          url: `contact-us/${this.$route.params.id}/reply`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;

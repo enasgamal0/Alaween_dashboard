@@ -1,24 +1,24 @@
 <template>
   <div class="crud_form_wrapper">
-    <!-- Start:: Title -->
     <div class="form_title_wrapper">
       <h4>{{ $t("PLACEHOLDERS.edit_main_section") }}</h4>
     </div>
-    <!-- End:: Title -->
-
-    <!-- Start:: Single Step Form Content -->
+    <div class="col-12 text-end">
+      <v-btn @click="$router.go(-1)" style="color: #1f92d6">
+        <i class="fas fa-backward"></i>
+      </v-btn>
+    </div>
     <div class="single_step_form_content_wrapper">
       <form @submit.prevent="validateFormInputs">
         <div class="row">
           <base-image-upload-input
             col="12"
             identifier="image"
+            :placeholder="$t('PLACEHOLDERS.section_image')"
             :preSelectedImage="data.image.path"
-           :placeholder="$t('PLACEHOLDERS.section_image')"
             @selectImage="selectImage"
           />
 
-          <!-- Start:: Ar Name Input -->
           <base-input
             col="6"
             type="text"
@@ -26,9 +26,7 @@
             v-model.trim="data.nameAr"
             required
           />
-          <!-- End:: Ar Name Input -->
 
-          <!-- Start:: En Name Input -->
           <base-input
             col="6"
             type="text"
@@ -36,31 +34,51 @@
             v-model.trim="data.nameEn"
             required
           />
-          <!-- End:: En Name Input -->
 
-          <!-- Start:: description_in_arabic Input -->
-          <base-input
-            col="6"
-            type="textarea"
-            cols="6"
-            :placeholder="$t('PLACEHOLDERS.description_in_arabic')"
-            v-model.trim="data.descAr"
-            required
-          />
-          <!-- End:: description_in_arabic Input -->
+          <div class="w-100">
+            <div class="row justify-content-center">
+              <div class="col-l2">
+                <div class="add_another" @click="addRow">
+                  <i class="fas fa-plus"></i>
+                </div>
+              </div>
+              <div
+                class="col-12"
+                v-for="(item, index) in data.fields"
+                :key="'l' + index"
+              >
+                <div class="item d-flex flex-wrap align-items-center">
+                  <base-input
+                    col="4"
+                    class="w-100"
+                    type="text"
+                    :placeholder="$t('PLACEHOLDERS.field_name_ar')"
+                    v-model.trim="item.name_ar"
+                  />
+                  <base-input
+                    col="4"
+                    class="w-100"
+                    type="text"
+                    :placeholder="$t('PLACEHOLDERS.field_name_en')"
+                    v-model.trim="item.name_en"
+                  />
+                  <base-select-input
+                    col="3"
+                    class="w-100"
+                    :optionsList="fieldTypes"
+                    :placeholder="$t('PLACEHOLDERS.field_type')"
+                    v-model="item.type"
+                  />
+                  <div class="all_actions" v-if="data.fields?.length > 1">
+                    <span class="add_another" @click="removeRow(index)">
+                      <i class="fas fa-minus"></i>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <!-- Start:: description_in_english Input -->
-          <base-input
-            col="6"
-            type="textarea"
-            cols="6"
-            :placeholder="$t('PLACEHOLDERS.description_in_english')"
-            v-model.trim="data.descEn"
-            required
-          />
-          <!-- End:: description_in_english Input -->
-
-          <!-- Start:: Deactivate Switch Input -->
           <div class="input_wrapper switch_wrapper my-5">
             <v-switch
               color="green"
@@ -73,9 +91,7 @@
               hide-details
             ></v-switch>
           </div>
-          <!-- End:: Deactivate Switch Input -->
 
-          <!-- Start:: Submit Button Wrapper -->
           <div class="btn_wrapper">
             <base-button
               class="mt-2"
@@ -85,60 +101,73 @@
               :disabled="isWaitingRequest"
             />
           </div>
-          <!-- End:: Submit Button Wrapper -->
         </div>
       </form>
     </div>
-    <!-- END:: Single Step Form Content -->
   </div>
 </template>
-
 <script>
 export default {
   name: "CreateArea",
 
-  data() {
-    return {
-      // Start:: Loader Control Data
-      isWaitingRequest: false,
-      // End:: Loader Control Data
-
-      // Start:: Data Collection To Send
-      data: {
-        image: {
-          path: null,
-          file: null,
-        },
-
-        nameAr: null,
-        nameEn: null,
-        descAr: null,
-        descEn: null,
-        payment_status: null,
-        active: true,
-      },
-      // End:: Data Collection To Send
-    };
-  },
-
   computed: {
-    paymentStatus() {
+    fieldTypes() {
       return [
         {
+          id: 0,
+          name: this.$t("PLACEHOLDERS.text"),
+          value: "text",
+        },
+        {
           id: 1,
-          name: this.$t("PLACEHOLDERS.paid"),
-          value: 1,
+          name: this.$t("PLACEHOLDERS.attachments"),
+          value: "file",
         },
         {
           id: 2,
-          name: this.$t("PLACEHOLDERS.unpaid"),
-          value: 0,
+          name: this.$t("PLACEHOLDERS.ddl"),
+          value: "dropdown",
         },
       ];
     },
   },
 
+  data() {
+    return {
+      isWaitingRequest: false,
+      data: {
+        image: {
+          path: null,
+          file: null,
+        },
+        nameAr: null,
+        nameEn: null,
+        active: true,
+        fields: [
+          {
+            nameAr: "",
+            nameEn: "",
+            type: "text",
+          },
+        ],
+      },
+    };
+  },
+
   methods: {
+    addRow() {
+      // Add new field object with index for proper binding
+      this.data?.fields.push({
+        nameAr: "",
+        nameEn: "",
+        type: "text",
+      });
+    },
+
+    removeRow(index) {
+      this.data?.fields.splice(index, 1);
+    },
+
     selectImage(selectedImage) {
       this.data.image = selectedImage;
     },
@@ -151,11 +180,26 @@ export default {
           url: `categories/${this.$route.params.id}`,
         });
         // Start:: Set Data
-        this.data.image.path = res.data.data.Category.image;
-        this.data.nameAr = res.data.data.Category.trans.name.ar;
-        this.data.nameEn = res.data.data.Category.trans.name.en;
-        this.data.descAr = res.data.data.Category.trans.description.ar;
-        this.data.descEn = res.data.data.Category.trans.description.en;
+        this.data.image.path = res.data.data.Category.logo;
+        this.data.nameAr = res.data.data.Category.name_ar;
+        this.data.nameEn = res.data.data.Category.name_en;
+        this.data.fields = res.data.data.Category.fields.map((field) => ({
+          id: field.id,
+          name_ar: field.name_ar,
+          name_en: field.name_en,
+          type: {
+            id: 0,
+            value: field.type,
+            name:
+              field.type == "dropdown"
+                ? this.$t("PLACEHOLDERS.ddl")
+                : field.type == "text"
+                ? this.$t("PLACEHOLDERS.text")
+                : field.type == "file"
+                ? this.$t("PLACEHOLDERS.attachments")
+                : field.type,
+          },
+        }));
         this.data.active = res.data.data.Category.is_active;
         // End:: Set Data
       } catch (error) {
@@ -187,14 +231,26 @@ export default {
       const REQUEST_DATA = new FormData();
 
       if (this.data.image.file) {
-        REQUEST_DATA.append("image", this.data.image.file);
+        REQUEST_DATA.append("logo", this.data.image.file);
       }
       // Start:: Append Request Data
       REQUEST_DATA.append("name[ar]", this.data.nameAr);
       REQUEST_DATA.append("name[en]", this.data.nameEn);
-      REQUEST_DATA.append("description[ar]", this.data.descAr);
-      REQUEST_DATA.append("description[en]", this.data.descEn);
-      REQUEST_DATA.append("is_active", +this.data.active);
+      REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
+      this.data?.fields.forEach((item, index) => {
+        REQUEST_DATA.append(
+          `categories[field_name][ar][${index}]`,
+          item.name_ar
+        );
+        REQUEST_DATA.append(
+          `categories[field_name][en][${index}]`,
+          item.name_en
+        );
+        REQUEST_DATA.append(
+          `categories[field_name][type][${index}]`,
+          item.type?.value
+        );
+      });
       REQUEST_DATA.append("_method", "PUT");
       // Start:: Append Request Data
 
@@ -206,7 +262,7 @@ export default {
         });
         this.isWaitingRequest = false;
         this.$message.success(this.$t("MESSAGES.editedSuccessfully"));
-        this.$router.push({ path: "/main-categories/all" });
+        this.$router.push({ path: "/categories/all" });
       } catch (error) {
         this.isWaitingRequest = false;
         this.$message.error(error.response.data.message);
@@ -222,3 +278,20 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.add_another {
+  border: none;
+  padding: 8px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--light_gray_clr);
+  border-radius: 50%;
+  font-size: 18px;
+  color: var(--light_gray_clr);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: auto;
+}
+</style>
