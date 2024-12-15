@@ -83,7 +83,7 @@
           <!-- End:: Permissions -->
 
           <!-- Start:: Deactivate Switch Input -->
-          <!--<div class="input_wrapper switch_wrapper my-5">
+          <div class="input_wrapper switch_wrapper my-5">
             <v-switch
               color="green"
               :label="
@@ -94,7 +94,7 @@
               v-model="data.active"
               hide-details
             ></v-switch>
-          </div> -->
+          </div>
           <!-- End:: Deactivate Switch Input -->
 
           <!-- Start:: Submit Button Wrapper -->
@@ -142,7 +142,7 @@ export default {
       data: {
         name_ar: null,
         name_en: null,
-        // active: null,
+        active: null,
         permissions: [],
       },
       EnRegex: /[\u0600-\u06FF]/,
@@ -217,11 +217,10 @@ export default {
         // Start:: Set Data
         this.data.name_ar = res.data.data.role.name_ar;
         this.data.name_en = res.data.data.role.name_en;
-        // this.data.active = res.data.data.role.is_active;
+        this.data.active = res.data.data.role.is_active;
+        console.log("testttt",  res.data.data);
         res.data.data.role.permissions.forEach((element) => {
-          element.controls.forEach((item) => {
-            this.data.permissions.push(item.id);
-          });
+          this.data.permissions.push(element.id);
         });
         // End:: Set Data
       } catch (error) {
@@ -262,7 +261,7 @@ export default {
       this.data.permissions.forEach((element) => {
         REQUEST_DATA.append("role_permissions[]", element);
       });
-      // REQUEST_DATA.append("is_active", +this.data.active);
+      REQUEST_DATA.append("is_active", +this.data.active);
 
       REQUEST_DATA.append("_method", "PUT");
 

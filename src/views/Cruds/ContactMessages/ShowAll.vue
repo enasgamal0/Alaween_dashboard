@@ -159,13 +159,13 @@
         </template>
 
         <!-- Start:: Message Reply -->
-        <template v-slot:[`item.reply`]="{ item }">
+        <template v-slot:[`item.reply_message`]="{ item }">
           <template>
-            <h6 class="text-danger" v-if="!item.reply">
+            <h6 class="text-danger" v-if="!item.reply_message">
               {{ $t("TABLES.noData") }}
             </h6>
             <div class="actions" v-else>
-              <button class="btn_show" @click="showReplayModal(item.reply)">
+              <button class="btn_show" @click="showReplayModal(item.reply_message)">
                 <i class="fal fa-file-alt"></i>
               </button>
             </div>
@@ -191,11 +191,11 @@
         <!-- Start:: Message Status -->
         <template v-slot:[`item.is_replied`]="{ item }">
           <v-chip
-            :color="item.reply ? 'green' : 'red'"
+            :color="item.reply_message ? 'green' : 'red'"
             text-color="white"
             small
           >
-            <template v-if="item.reply">
+            <template v-if="item.reply_message">
               {{ $t("STATUS.replied") }}
             </template>
             <template v-else>
@@ -208,9 +208,9 @@
         <!-- Start:: Actions -->
         <template v-slot:[`item.actions`]="{ item }">
           <div class="actions">
-            <!-- v-if="permissions.reply" -->
+            <!-- v-if="permissions.reply_message" -->
             <template>
-              <span class="blue-grey--text text--darken-1" v-if="item.reply">
+              <span class="blue-grey--text text--darken-1" v-if="item.reply_message">
                 <i class="far fa-horizontal-rule"></i>
               </span>
               <a-tooltip placement="bottom" v-else>
@@ -259,7 +259,7 @@
                 <v-btn
                   class="modal_confirm_btn"
                   @click="sendReplay"
-                  :disabled="!!!messageReplay"
+                  :disabled="!!!messageReplay || messageReplay?.length < 3"
                 >
                   {{ $t("BUTTONS.replay") }}
                 </v-btn>
@@ -342,11 +342,6 @@ export default {
           name: this.$t("STATUS.other"),
           value: "another",
         },
-        {
-          id: 6,
-          name: this.$t("STATUS.all"),
-          value: null,
-        },
       ];
     },
 
@@ -355,12 +350,12 @@ export default {
         {
           id: 1,
           name: this.$t("STATUS.replied"),
-          value: "response",
+          value: "1",
         },
         {
           id: 2,
           name: this.$t("STATUS.notReplied"),
-          value: "No_response",
+          value: "0",
         },
       ];
     },
@@ -438,7 +433,7 @@ export default {
         },
         {
           text: this.$t("TABLES.ContactMessages.replay"),
-          value: "reply",
+          value: "reply_message",
           align: "center",
           width: "120",
           sortable: false,
@@ -537,10 +532,10 @@ export default {
           params: {
             page: this.paginations.current_page,
             name: this.filterOptions.name,
-            mobile: this.filterOptions.phone,
+            phone: this.filterOptions.phone,
             email: this.filterOptions.email,
-            type_message: this.filterOptions.messageType?.value,
-            status: this.filterOptions.status?.value,
+            type: this.filterOptions.messageType?.value,
+            is_reply: this.filterOptions.status?.value,
           },
         });
         this.loading = false;
@@ -577,11 +572,10 @@ export default {
     async sendReplay() {
       this.dialogSendReplay = false;
       // const REQUEST_DATA = new FormData();
-      // REQUEST_DATA.append("reply", this.messageReplay.reply);
+      // REQUEST_DATA.append("reply_message", this.messageReplay.reply_message);
       // REQUEST_DATA.append("_method", 'PUT');
       const REQUEST_DATA = {
-        reply: this.messageReplay,
-        _method: "post"
+        reply_message: this.messageReplay,
       };
 
       try {
@@ -597,7 +591,7 @@ export default {
           (element) => element.id === this.itemToSendReplay.id
         );
         filteredElemet.replied = !filteredElemet.replied;
-        filteredElemet.reply = this.messageReplay;
+        filteredElemet.reply_message = this.messageReplay;
 
         this.itemToSendReplay = null;
         this.messageReplay = null;

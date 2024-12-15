@@ -552,6 +552,28 @@
       </div>
       <!-- End:: managements Route -->
 
+      <!-- Start:: offers Route -->
+      <div
+        class="home_route"
+        @click="$emit('fireToggleNavDrawerEmit')"
+        v-if="$can('slider index', 'slider')"
+      >
+        <router-link to="/Offers/all">
+          <span class="route_icon">
+            <img
+              src="@/assets/media/icons/ui_icons/offers.svg"
+              alt="icon"
+              width="40"
+              height="40"
+            />
+          </span>
+          <span class="route_text">
+            {{ $t("SIDENAV.OffersManagement.title") }}
+          </span>
+        </router-link>
+      </div>
+      <!-- End:: offers Route -->
+
       <!-- Start:: ads Route -->
       <div
         class="home_route"
@@ -816,12 +838,12 @@ export default {
                 this.$can("role index", "role") ||
                 this.$can("permission index", "permission"),
             },
-            {
-              key: "admins",
-              title: this.$t("SIDENAV.Admins.title"),
-              route: "/admins/all",
-              hasPermission: this.$can("admins index", "admins"),
-            },
+            // {
+            //   key: "admins",
+            //   title: this.$t("SIDENAV.Admins.title"),
+            //   route: "/admins/all",
+            //   hasPermission: this.$can("admins index", "admins"),
+            // },
           ],
         },
       ],

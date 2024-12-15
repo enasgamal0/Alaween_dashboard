@@ -74,6 +74,14 @@ import AllUsers from "../views/Cruds/Users/ShowAll.vue";
 import ShowUsers from "../views/Cruds/Users/Show.vue";
 // ============ End:: Users Routes
 
+// ============== Start:: Offers Routes
+import OffersHome from "../views/Cruds/Offers/Home.vue";
+import AllOffers from "../views/Cruds/Offers/ShowAll.vue";
+import CreateOffers from "../views/Cruds/Offers/Create.vue";
+import ShowOffers from "../views/Cruds/Offers/Show.vue";
+import EditOffers from "../views/Cruds/Offers/Edit.vue";
+// ============== End:: Offers Routes
+
 // ============== Start:: Ads Routes
 import AdsHome from "../views/Cruds/Ads/Home.vue";
 import AllAds from "../views/Cruds/Ads/ShowAll.vue";
@@ -1235,6 +1243,69 @@ const routes = [
         ],
       },
       // End:: packages Config
+
+      // Start:: offers Config
+      {
+        path: "/offers",
+        name: "offers",
+        component: OffersHome,
+        meta: {
+          middleware: [auth],
+        },
+        children: [
+          {
+            path: "all",
+            name: "Alloffers",
+            component: AllOffers,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "offer index",
+                subject: "offer",
+              },
+            },
+          },
+          {
+            path: "create",
+            name: "Createoffers",
+            component: CreateOffers,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "offer create",
+                subject: "offer",
+              },
+            },
+          },
+          {
+            path: "edit/:id",
+            name: "Editoffers",
+            component: EditOffers,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "offers edit",
+                subject: "offers",
+              },
+            },
+          },
+          {
+            path: "show/:id",
+            name: "Showoffers",
+            component: ShowOffers,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "offers show",
+                subject: "offers",
+              },
+            },
+          },
+        ],
+      },
+      // End:: offers Config
 
       // Start:: ads  Config
       {

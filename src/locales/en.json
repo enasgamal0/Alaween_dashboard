@@ -346,7 +346,8 @@
       "AddOffer": "Create Offer",
       "to": "Offer Date To",
       "percentage": "Discount Percentage",
-      "offerTitleEn": "Offer Title (en)",
+      "offerTitleEn": "Offer Title (EN)",
+      "offerTitleAr": "Offer Title (AR)",
       "unitTitle": "Unit Name",
       "providerName": "Service Provider Name",
       "providerEmail": "Service Provider Email",
@@ -354,7 +355,13 @@
       "offers": "Offers",
       "offerTitle": "Offer Title",
       "title": "Offer Management",
-      "providerOffers": "Offers from Service Providers"
+      "providerOffers": "Offers from Service Providers",
+      "start_date": "Offer Start Date",
+      "end_date": "Offer End Date",
+      "descriptionAr": "Offer Description (AR)",
+      "descriptionEn": "Offer Description (EN)",
+      "featuresAr": "Offer Features (AR)",
+      "featuresEn": "Offer Features (EN)"
     },
     "GoldenOrder": {
       "cancelDate": "Cancellation Date",
@@ -1025,6 +1032,7 @@
     "showDriver": "Driver's ({name}) Data",
     "clients": "Clients",
     "addClient": "Add New Client",
+    "addOffer": "Add New Offer",
     "editClient": "Edit Client",
     "showClient": "Client's ({name}) Data",
     "clientAddresses": "Client Addresses",
@@ -2121,7 +2129,8 @@
     "is_show_map": "Active field not choose",
     "package_duration": "The number of days must be positive",
     "dissount": "The discount percentage cannot be higher than 100",
-    "discount_field": "The discount percentage field is required"
+    "discount_field": "The discount percentage field is required",
+    "store_id": "Provider Name field is required"
   },
 
   "MESSAGES": {

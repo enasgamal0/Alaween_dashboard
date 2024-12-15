@@ -86,7 +86,7 @@
           <!-- End:: Permissions -->
 
           <!-- Start:: Deactivate Switch Input -->
-          <!-- <div class="input_wrapper switch_wrapper my-5">
+          <div class="input_wrapper switch_wrapper my-5">
             <v-switch
               color="green"
               :label="
@@ -97,7 +97,7 @@
               v-model="data.active"
               hide-details
             ></v-switch>
-          </div> -->
+          </div>
           <!-- End:: Deactivate Switch Input -->
 
           <!-- Start:: Submit Button Wrapper -->
@@ -134,7 +134,7 @@ export default {
       data: {
         name_ar: null,
         name_en: null,
-        // active: true,
+        active: true,
         permissions: [],
       },
 
@@ -226,9 +226,9 @@ export default {
     async submitForm() {
       const REQUEST_DATA = new FormData();
       // Start:: Append Request Data
-      REQUEST_DATA.append("name_ar", this.data.name_ar);
-      REQUEST_DATA.append("name_en", this.data.name_en);
-      // REQUEST_DATA.append("is_active", +this.data.active);
+      REQUEST_DATA.append("name[ar]", this.data.name_ar);
+      REQUEST_DATA.append("name[en]", this.data.name_en);
+      REQUEST_DATA.append("is_active", +this.data.active);
       this.data.permissions.forEach((element) => {
         REQUEST_DATA.append("role_permissions[]", element);
       });
