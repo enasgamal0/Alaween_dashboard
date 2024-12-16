@@ -8,26 +8,26 @@
         height="120"
         class="selected_image_preview"
       />
-      <div class="input_wrapper upload_file_text_preview top_label">
+      <div class="input_wrapper upload_file_class top_label">
         <span class="form-label">
           {{ placeholder }}
           <span class="text-danger" v-if="required"> * </span>
         </span>
 
-        <label class="input_file_label" :for="identifier">
+        <!-- <label class="input_file_label" :for="identifier">
           <span class="file_name" v-if="preSelectedFile">
             {{ preSelectedFile }}
           </span>
           <span class="file_name" v-else-if="selectedFile.name">
             {{ selectedFile.name }}
           </span>
-        </label>
-
+        </label> -->
         <input
           type="file"
           accept="image/*, .pdf"
           class="form-control"
           :id="identifier"
+          multiple
           @change="selectFileToUpload"
         />
       </div>
@@ -112,7 +112,7 @@ export default {
     border-radius: 10px;
     object-fit: cover;
   }
-  .upload_file_text_preview {
+  .upload_file_class {
     width: 100%;
   }
 }

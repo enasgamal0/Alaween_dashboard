@@ -181,6 +181,28 @@
       </div>
       <!-- End:: users Route -->
 
+      <!-- Start:: providers Route -->
+      <div
+        class="home_route"
+        @click="$emit('fireToggleNavDrawerEmit')"
+        v-if="$can('store index', 'store')"
+      >
+        <router-link to="/providers/all">
+          <span class="route_icon">
+            <img
+              src="@/assets/media/icons/ui_icons/provider.png"
+              alt="icon"
+              width="40"
+              height="40"
+            />
+          </span>
+          <span class="route_text">
+            {{ $t("PLACEHOLDERS.providers_management") }}
+          </span>
+        </router-link>
+      </div>
+      <!-- End:: providers Route -->
+
       <!-- Start:: main_sections Route -->
       <div
         class="home_route"

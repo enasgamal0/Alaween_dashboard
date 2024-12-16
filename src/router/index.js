@@ -74,6 +74,16 @@ import AllUsers from "../views/Cruds/Users/ShowAll.vue";
 import ShowUsers from "../views/Cruds/Users/Show.vue";
 // ============ End:: Users Routes
 
+// ============== Start:: Providers Routes
+import ProvidersHome from "../views/Cruds/Providers/Home.vue";
+import AllProviders from "../views/Cruds/Providers/ShowAll.vue";
+import CreateProviders from "../views/Cruds/Providers/Create.vue";
+import CreateSocial from "../views/Cruds/Providers/CreateSocial.vue";
+import CreateProviderHours from "../views/Cruds/Providers/CreateProviderHours.vue";
+import ShowProviders from "../views/Cruds/Providers/Show.vue";
+import EditProviders from "../views/Cruds/Providers/Edit.vue";
+// ============== End:: Providers Routes
+
 // ============== Start:: Offers Routes
 import OffersHome from "../views/Cruds/Offers/Home.vue";
 import AllOffers from "../views/Cruds/Offers/ShowAll.vue";
@@ -1243,6 +1253,93 @@ const routes = [
         ],
       },
       // End:: packages Config
+
+      // Start:: providers Config
+      {
+        path: "/providers",
+        name: "providers",
+        component: ProvidersHome,
+        meta: {
+          middleware: [auth],
+        },
+        children: [
+          {
+            path: "all",
+            name: "Allproviders",
+            component: AllProviders,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "store index",
+                subject: "store",
+              },
+            },
+          },
+          {
+            path: "create/:id",
+            name: "Createproviders",
+            component: CreateProviders,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "store create",
+                subject: "store",
+              },
+            },
+          },
+          {
+            path: "provider-social/:id",
+            name: "CreateSocial",
+            component: CreateSocial,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "store create" || "store edit",
+                subject: "store",
+              },
+            },
+          },
+          {
+            path: "provider-hours/:id",
+            name: "CreateProviderHours",
+            component: CreateProviderHours,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "store create" || "store edit",
+                subject: "store",
+              },
+            },
+          },
+          {
+            path: "edit/:id",
+            name: "Editproviders",
+            component: EditProviders,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "store edit",
+                subject: "store",
+              },
+            },
+          },
+          {
+            path: "show/:id",
+            name: "Showproviders",
+            component: ShowProviders,
+            props: true,
+            meta: {
+              middleware: [auth],
+              requiresPermission: {
+                action: "store show",
+                subject: "store",
+              },
+            },
+          },
+        ],
+      },
+      // End:: providers Config
 
       // Start:: offers Config
       {
