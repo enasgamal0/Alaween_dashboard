@@ -102,11 +102,20 @@
                 />
               </div>
               <div v-if="field.type == 'file'" class="py-1">
-                <base-name-preview-file-upload-input
+                <!-- <base-name-preview-file-upload-input
                   :placeholder="field.name"
-                  v-model="data[field.name]"
+                  v-model="data.files"
                   :required="true"
-                />
+                />{{ data.files }} -->
+                <base-multi-image-upload-input
+                  :urls="data.imgUrls"
+                  multiple
+                  @onFileSelect="onFileSelectField"
+                  @onFileRemove="onFileRemoveField"
+                >
+                  {{ $t("PLACEHOLDERS.imagesefed") }}
+                  {{ $t("PLACEHOLDERS.extendPhoto") }}
+                </base-multi-image-upload-input>
               </div>
             </div>
           </div>
@@ -166,6 +175,8 @@ export default {
           path: null,
           file: null,
         },
+        imgUrls: [],
+        additionalImages: [],
         nameAr: null,
         nameEn: null,
         descProd: null,
@@ -181,10 +192,15 @@ export default {
   methods: {
     onFileSelect(files) {
       this.additionalImages = files;
-      console.log("additionalImages", this.additionalImages);
     },
     onFileRemove(index) {
-      this.$delete(this.imgUrls, index);
+      this.$delete(this.data.imgUrls, index);
+    },
+    onFileSelectField(files) {
+      this.data.additionalImages = files;
+    },
+    onFileRemoveField(index) {
+      this.$delete(this.data.imgUrls, index);
     },
     async getSections() {
       try {
@@ -301,7 +317,7 @@ export default {
           ) {
             // For file fields, append each file as a separate value
             REQUEST_DATA.append(`fields[${index}][id]`, field.id);
-            this.data[field.name].forEach((file, fileIndex) => {
+            this.data.additionalImages?.forEach((file, fileIndex) => {
               REQUEST_DATA.append(
                 `fields[${index}][value][${fileIndex}]`,
                 file

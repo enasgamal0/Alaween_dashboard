@@ -34,7 +34,7 @@
             v-model.trim="data.nameEn"
             required
           />
-
+          <h5 class="text-center font-weight-bold my-5" style="color: #1F92D6">{{ $t("PLACEHOLDERS.additional_fields") }}</h5>
           <div class="w-100">
             <div class="row justify-content-center">
               <div class="col-l2">
@@ -74,7 +74,43 @@
                       <i class="fas fa-minus"></i>
                     </span>
                   </div>
+                  <div v-if="item.type.value === 'dropdown'" class="col-12">
+                    <!-- Dropdown Options -->
+                    <h6 class="font-weight-bold" style="color: #1F92D6">{{ $t("PLACEHOLDERS.options") }}:</h6>
+                    <div
+                      v-for="(option, optionIndex) in item.options"
+                      :key="'option-' + optionIndex"
+                    >
+                      <div class="d-flex">
+                        <base-input
+                          col="5"
+                          type="text"
+                          :placeholder="$t('PLACEHOLDERS.option_name_ar')"
+                          v-model="option.ar"
+                        />
+                        <base-input
+                          col="5"
+                          type="text"
+                          :placeholder="$t('PLACEHOLDERS.option_name_en')"
+                          v-model="option.en"
+                        />
+                        <div class="d-flex gap-3">
+                          <div class="add_another" @click="addOption(index)">
+                            <i class="fas fa-plus"></i>
+                          </div>
+                          <div
+                            v-if="item.options.length > 1"
+                            class="add_another"
+                            @click="removeOption(index, optionIndex)"
+                          >
+                            <i class="fas fa-minus"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+                <hr class="my-5 py-5">
               </div>
             </div>
           </div>
@@ -82,11 +118,7 @@
           <div class="input_wrapper switch_wrapper my-5">
             <v-switch
               color="green"
-              :label="
-                data.active
-                  ? $t('PLACEHOLDERS.active')
-                  : $t('PLACEHOLDERS.notActive')
-              "
+              :label="data.active ? $t('PLACEHOLDERS.active') : $t('PLACEHOLDERS.notActive')"
               v-model="data.active"
               hide-details
             ></v-switch>
@@ -106,28 +138,17 @@
     </div>
   </div>
 </template>
+
 <script>
 export default {
-  name: "CreateArea",
+  name: "EditCategory",
 
   computed: {
     fieldTypes() {
       return [
-        {
-          id: 0,
-          name: this.$t("PLACEHOLDERS.text"),
-          value: "text",
-        },
-        {
-          id: 1,
-          name: this.$t("PLACEHOLDERS.attachments"),
-          value: "file",
-        },
-        {
-          id: 2,
-          name: this.$t("PLACEHOLDERS.ddl"),
-          value: "dropdown",
-        },
+        { id: 0, name: this.$t("PLACEHOLDERS.text"), value: "text" },
+        { id: 1, name: this.$t("PLACEHOLDERS.attachments"), value: "file" },
+        { id: 2, name: this.$t("PLACEHOLDERS.ddl"), value: "dropdown" },
       ];
     },
   },
@@ -136,10 +157,7 @@ export default {
     return {
       isWaitingRequest: false,
       data: {
-        image: {
-          path: null,
-          file: null,
-        },
+        image: { path: null, file: null },
         nameAr: null,
         nameEn: null,
         active: true,
@@ -148,6 +166,7 @@ export default {
             nameAr: "",
             nameEn: "",
             type: "text",
+            options: [{ ar: "", en: "" }],
           },
         ],
       },
@@ -156,58 +175,78 @@ export default {
 
   methods: {
     addRow() {
-      // Add new field object with index for proper binding
-      this.data?.fields.push({
+      this.data.fields.push({
         nameAr: "",
         nameEn: "",
         type: "text",
+        options: [{ ar: "", en: "" }],
       });
     },
 
     removeRow(index) {
-      this.data?.fields.splice(index, 1);
+      this.data.fields.splice(index, 1);
+    },
+
+    addOption(index) {
+      const field = this.data.fields[index];
+      field.options.push({ ar: "", en: "" });
+    },
+
+    removeOption(index, optionIndex) {
+      const field = this.data.fields[index];
+      field.options.splice(optionIndex, 1);
     },
 
     selectImage(selectedImage) {
       this.data.image = selectedImage;
     },
 
-    // Start:: Get Data To Edit
     async getDataToEdit() {
       try {
-        let res = await this.$axios({
+        const res = await this.$axios({
           method: "GET",
           url: `categories/${this.$route.params.id}`,
         });
-        // Start:: Set Data
-        this.data.image.path = res.data.data.Category.logo;
-        this.data.nameAr = res.data.data.Category.name_ar;
-        this.data.nameEn = res.data.data.Category.name_en;
-        this.data.fields = res.data.data.Category.fields.map((field) => ({
+
+        // Populate data from the API response
+        const category = res.data.data.Category;
+
+        this.data.image.path = category.logo;
+        this.data.nameAr = category.name_ar;
+        this.data.nameEn = category.name_en;
+        this.data.active = category.is_active;
+
+        // Map fields and options for dropdowns
+        this.data.fields = category.fields.map((field) => ({
           id: field.id,
           name_ar: field.name_ar,
           name_en: field.name_en,
           type: {
-            id: 0,
             value: field.type,
-            name:
-              field.type == "dropdown"
-                ? this.$t("PLACEHOLDERS.ddl")
-                : field.type == "text"
-                ? this.$t("PLACEHOLDERS.text")
-                : field.type == "file"
-                ? this.$t("PLACEHOLDERS.attachments")
-                : field.type,
+            name: this.getFieldTypeName(field.type),
           },
+          options: field.type === "dropdown" && field.options
+            ? field.options.map(option => ({
+                ar: option.name_ar || "",
+                en: option.name_en || ""
+              }))
+            : [],
         }));
-        this.data.active = res.data.data.Category.is_active;
-        // End:: Set Data
       } catch (error) {
         console.log(error.response.data.message);
       }
     },
-    // End:: Get Data To Edit
-    // Start:: validate Form Inputs
+
+    getFieldTypeName(type) {
+      return type === "dropdown"
+        ? this.$t("PLACEHOLDERS.ddl")
+        : type === "text"
+        ? this.$t("PLACEHOLDERS.text")
+        : type === "file"
+        ? this.$t("PLACEHOLDERS.attachments")
+        : type;
+    },
+
     validateFormInputs() {
       this.isWaitingRequest = true;
 
@@ -221,38 +260,34 @@ export default {
         return;
       } else {
         this.submitForm();
-        return;
       }
     },
-    // End:: validate Form Inputs
 
-    // Start:: Submit Form
     async submitForm() {
       const REQUEST_DATA = new FormData();
 
       if (this.data.image.file) {
         REQUEST_DATA.append("logo", this.data.image.file);
       }
-      // Start:: Append Request Data
       REQUEST_DATA.append("name[ar]", this.data.nameAr);
       REQUEST_DATA.append("name[en]", this.data.nameEn);
       REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
-      this.data?.fields.forEach((item, index) => {
-        REQUEST_DATA.append(
-          `categories[field_name][ar][${index}]`,
-          item.name_ar
-        );
-        REQUEST_DATA.append(
-          `categories[field_name][en][${index}]`,
-          item.name_en
-        );
-        REQUEST_DATA.append(
-          `categories[field_name][type][${index}]`,
-          item.type?.value
-        );
+
+      // Append field data (including options for dropdowns)
+      this.data.fields.forEach((item, index) => {
+        REQUEST_DATA.append(`categories[field_name][ar][${index}]`, item.name_ar);
+        REQUEST_DATA.append(`categories[field_name][en][${index}]`, item.name_en);
+        REQUEST_DATA.append(`categories[field_name][type][${index}]`, item.type.value);
+
+        if (item.type.value === "dropdown") {
+          item.options.forEach((option, optionIndex) => {
+            REQUEST_DATA.append(`categories[field_name][dropdown][${index}][${optionIndex}][ar]`, option.ar);
+            REQUEST_DATA.append(`categories[field_name][dropdown][${index}][${optionIndex}][en]`, option.en);
+          });
+        }
       });
+
       REQUEST_DATA.append("_method", "PUT");
-      // Start:: Append Request Data
 
       try {
         await this.$axios({
@@ -262,19 +297,17 @@ export default {
         });
         this.isWaitingRequest = false;
         this.$message.success(this.$t("MESSAGES.editedSuccessfully"));
-        this.$router.push({ path: "/categories/all" });
+        this.getDataToEdit();
+        // this.$router.push({ path: "/categories/all" });
       } catch (error) {
         this.isWaitingRequest = false;
         this.$message.error(error.response.data.message);
       }
     },
-    // End:: Submit Form
   },
 
   async created() {
-    // Start:: Fire Methods
     this.getDataToEdit();
-    // End:: Fire Methods
   },
 };
 </script>
@@ -292,6 +325,6 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin: auto;
+  margin: auto !important;
 }
 </style>

@@ -1109,6 +1109,7 @@
   },
 
   "BUTTONS": {
+    "addTime": "Add New Time",
     "social_data": "Social Data",
     "work_hours": "Work Hours",
     "post": "Post",
@@ -1231,6 +1232,9 @@
   },
 
   "PLACEHOLDERS": {
+    "options": "Options",
+    "option_name_ar": "Option (AR)",
+    "option_name_en": "Option (EN)",
     "day": "Day",
     "working_hours": "Working Hours",
     "video_limit": "Video Limit (By Seconds)",

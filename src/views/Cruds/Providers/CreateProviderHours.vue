@@ -12,7 +12,7 @@
               </v-btn>
             </div>
           </div>
-          <div v-if="data.work_hours.length == 0" class="text-center">
+          <!-- <div v-if="data.work_hours.length == 0" class="text-center">
             <h5 class="my-5 mx-2 d-inline">{{ $t("TABLES.noData") }}</h5>
             <button type="button" @click="addWorkDay">
               <i
@@ -20,7 +20,7 @@
                 style="font-size: 20px; color: #007bff"
               ></i>
             </button>
-          </div>
+          </div> -->
           <div v-for="(element, index) in data.work_hours" :key="index">
             <base-select-input
               col="10"
@@ -29,13 +29,14 @@
               v-model="element.day_id"
               disabled
             />
-            <div v-if="element.times?.length>0"
+            <div
+              v-if="element.times?.length > 0"
               v-for="(time, timeIndex) in element.times"
               :key="timeIndex"
               class="row"
             >
               <base-input
-                v-if="time.start_time"
+                v-if="time.start_time && time.start_time.includes('am' || 'pm')"
                 col="4"
                 type="time"
                 :placeholder="$t('TABLES.ImagesSpaces.start_time')"
@@ -50,7 +51,7 @@
                 v-model.trim="time.start_time"
               />
               <base-input
-                v-if="time.end_time"
+                v-if="time.end_time && time.start_time.includes('am' || 'pm')"
                 col="4"
                 type="time"
                 :placeholder="$t('TABLES.ImagesSpaces.end_time')"
@@ -67,8 +68,14 @@
               <div class="col-3 mt-5 pt-5">
                 <button
                   type="button"
-                  v-if="time.end_time != null || time.start_time != null || timeIndex > 0"
-                  @click="removeWorkDay(index, timeIndex, time.id, element.day_id)"
+                  v-if="
+                    time.end_time != null ||
+                    time.start_time != null ||
+                    timeIndex > 0
+                  "
+                  @click="
+                    removeWorkDay(index, timeIndex, time.id, element.day_id)
+                  "
                 >
                   <i
                     class="fas fa-minus-circle"
@@ -87,7 +94,15 @@
                 </button>
               </div>
             </div>
-            <div v-else>Empty</div>
+            <div v-if="element.times?.length == 0">
+              <button type="button" @click="addWorkDay(element.day_id.id)">
+                <i
+                  class="fas fa-plus-circle"
+                  style="font-size: 20px; color: #007bff"
+                ></i>
+                {{ $t("BUTTONS.addTime") }}
+              </button>
+            </div>
             <hr class="my-5 py-5" />
           </div>
 
@@ -247,11 +262,6 @@ export default {
         )[0];
         const allDayIds = Object.values(this.dayMapping).map((day) => day.id);
         allDayIds.forEach((dayId) => {
-          console.log(
-            "foundDay",
-            Object.values(this.dayMapping).find((day) => day.id == dayId)
-          );
-
           if (!existingDayIds.includes(dayId)) {
             // Add missing day with empty times
             this.data.work_hours.push({
@@ -263,7 +273,6 @@ export default {
               },
               times: [{ id: null, start_time: null, end_time: null }],
             });
-            console.log("allDayIds2", this.data.work_hours);
           }
         });
       } catch (error) {

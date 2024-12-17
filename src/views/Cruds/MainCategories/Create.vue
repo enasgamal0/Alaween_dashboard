@@ -33,8 +33,8 @@
             v-model.trim="data.nameEn"
             required
           />
-
-          <div class="row">
+          <h5 class="text-center font-weight-bold my-5" style="color: #1F92D6">{{ $t("PLACEHOLDERS.additional_fields") }}</h5>
+          <div>
             <div class="row justify-content-center">
               <div class="col-l2">
                 <div class="add_another" @click="addRow">
@@ -73,7 +73,35 @@
                       <i class="fas fa-minus"></i>
                     </span>
                   </div>
+                  <div v-if="item.type.value === 'dropdown'" class="col-12">
+                    <h6 class="font-weight-bold" style="color: #1F92D6">{{ $t("PLACEHOLDERS.options") }}:</h6>
+                    <div v-for="(option, optionIndex) in item.options" :key="'option' + optionIndex">
+                      <div class="d-flex">
+                        <base-input
+                          col="5"
+                          type="text"
+                          :placeholder="$t('PLACEHOLDERS.option_name_ar')"
+                          v-model="option.ar"
+                        />
+                        <base-input
+                          col="5"
+                          type="text"
+                          :placeholder="$t('PLACEHOLDERS.option_name_en')"
+                          v-model="option.en"
+                        />
+                        <div class="d-flex gap-3">
+                          <div class="add_another" @click="addOption(index)">
+                            <i class="fas fa-plus"></i>
+                          </div>
+                          <div v-if="item.options.length > 1" class="add_another" @click="removeOption(index, optionIndex)">
+                            <i class="fas fa-minus"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+                <hr class="my-5 py-5">
               </div>
             </div>
           </div>
@@ -81,11 +109,7 @@
           <div class="input_wrapper switch_wrapper my-5">
             <v-switch
               color="green"
-              :label="
-                data.active
-                  ? $t('PLACEHOLDERS.active')
-                  : $t('PLACEHOLDERS.notActive')
-              "
+              :label="data.active ? $t('PLACEHOLDERS.active') : $t('PLACEHOLDERS.notActive')"
               v-model="data.active"
               hide-details
             ></v-switch>
@@ -105,6 +129,7 @@
     </div>
   </div>
 </template>
+
 <script>
 export default {
   name: "CreateArea",
@@ -112,21 +137,9 @@ export default {
   computed: {
     fieldTypes() {
       return [
-        {
-          id: 0,
-          name: this.$t("PLACEHOLDERS.text"),
-          value: "text",
-        },
-        {
-          id: 1,
-          name: this.$t("PLACEHOLDERS.attachments"),
-          value: "file",
-        },
-        {
-          id: 2,
-          name: this.$t("PLACEHOLDERS.ddl"),
-          value: "dropdown",
-        },
+        { id: 0, name: this.$t("PLACEHOLDERS.text"), value: "text" },
+        { id: 1, name: this.$t("PLACEHOLDERS.attachments"), value: "file" },
+        { id: 2, name: this.$t("PLACEHOLDERS.ddl"), value: "dropdown" },
       ];
     },
   },
@@ -135,18 +148,14 @@ export default {
     return {
       isWaitingRequest: false,
       data: {
-        image: {
-          path: null,
-          file: null,
-        },
+        image: { path: null, file: null },
         nameAr: null,
         nameEn: null,
         active: true,
         fields: [
           {
-            nameAr: "",
-            nameEn: "",
             type: "text",
+            options: [{ar: "", en: ""}],
           },
         ],
       },
@@ -155,16 +164,25 @@ export default {
 
   methods: {
     addRow() {
-      // Add new field object with index for proper binding
       this.data?.fields.push({
-        nameAr: "",
-        nameEn: "",
         type: "text",
+        options: [{ar: "", en: ""}],
       });
     },
 
     removeRow(index) {
       this.data?.fields.splice(index, 1);
+    },
+
+    addOption(index) {
+      console.log("this.data.fields", this.data.fields)
+      const field = this.data.fields[index];
+        field.options.push({ ar: "", en: "" });
+    },
+
+    removeOption(index, optionIndex) {
+      const field = this.data.fields[index];
+        field.options.splice(optionIndex, 1);
     },
 
     selectImage(selectedImage) {
@@ -191,7 +209,6 @@ export default {
     async submitForm() {
       const REQUEST_DATA = new FormData();
 
-      // Append the image if selected
       if (this.data.image.file) {
         REQUEST_DATA.append("logo", this.data.image.file);
       }
@@ -199,20 +216,18 @@ export default {
       REQUEST_DATA.append("name[en]", this.data.nameEn);
       REQUEST_DATA.append("is_active", +this.data.active);
 
-      // Append fields dynamically based on the added rows
       this.data?.fields.forEach((item, index) => {
-        REQUEST_DATA.append(
-          `categories[field_name][ar][${index}]`,
-          item.nameAr
-        );
-        REQUEST_DATA.append(
-          `categories[field_name][en][${index}]`,
-          item.nameEn
-        );
-        REQUEST_DATA.append(
-          `categories[field_name][type][${index}]`,
-          item.type?.value
-        );
+        REQUEST_DATA.append(`categories[field_name][ar][${index}]`, item.nameAr);
+        REQUEST_DATA.append(`categories[field_name][en][${index}]`, item.nameEn);
+        REQUEST_DATA.append(`categories[field_name][type][${index}]`, item.type?.value);
+
+        // Add options for dropdown fields
+        if (item.type.value == "dropdown") {
+          item.options.forEach((option, optionIndex) => {
+            REQUEST_DATA.append(`categories[field_name][dropdown][${index}][${optionIndex}][ar]`, option.ar);
+            REQUEST_DATA.append(`categories[field_name][dropdown][${index}][${optionIndex}][en]`, option.en);
+          });
+        }
       });
 
       try {
@@ -232,6 +247,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
 .add_another {
   border: none;
@@ -246,6 +262,6 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin: auto;
+  margin: auto !important;
 }
 </style>

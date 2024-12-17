@@ -83,7 +83,40 @@
           />
           <!-- End:: Store Input -->
 
-          <!-- Start:: Dynamically Render Fields Based on Store Selection -->
+          <!-- Start:: Dynamically Render Fields Based on Store Selection -->aaaaaaaaaaaa{{
+            data
+          }}
+          <div v-if="data.section_id && data.store_field">
+            <div v-for="field in data.store_field" :key="field.field.id">
+              <div v-if="field.field.type === 'dropdown'" class="py-1">
+                <base-select-input
+                  :placeholder="field.field.name"
+                  v-model="data[field.field.name]"
+                  :optionsList="dropdownOptions[field.field.id]"
+                  :required="true"
+                />
+              </div>
+              <div v-if="field.field.type === 'text'" class="py-1">
+                <base-input
+                  type="text"
+                  :placeholder="field.field.name"
+                  v-model="data[field.field.name]"
+                  :required="true"
+                />
+              </div>
+              <div v-if="field.field.type == 'file'" class="py-1">
+                <base-multi-image-upload-input
+                  :urls="AddimgUrls"
+                  multiple
+                  @onFileSelect="onFileSelectField"
+                  @onFileRemove="AdddonFileRemoveField"
+                >
+                  {{ $t("PLACEHOLDERS.imagesefed") }}
+                  {{ $t("PLACEHOLDERS.extendPhoto") }}
+                </base-multi-image-upload-input>
+              </div>
+            </div>
+          </div>
           <div v-if="data.section_id && data.section_id.fields">
             <div v-for="field in data.section_id.fields" :key="field.id">
               <div v-if="field.type === 'dropdown'" class="py-1">
@@ -94,13 +127,13 @@
                   :required="true"
                 />
               </div>
-              <div v-if="field.type === 'text'" class="py-1">
+              <div v-if="field.type === 'text'" class="py-1">{{data}}
                 <base-input
                   type="text"
                   :placeholder="field.name"
                   v-model="data[field.name]"
                   :required="true"
-                />
+                />{{ data[field.name] }}
               </div>
               <div v-if="field.type == 'file'" class="py-1">
                 <base-name-preview-file-upload-input
@@ -129,7 +162,7 @@
             <base-button
               class="mt-2"
               styleType="primary_btn"
-              :btnText="$t('BUTTONS.save_next')"
+              :btnText="$t('BUTTONS.save')"
               :isLoading="isWaitingRequest"
               :disabled="isWaitingRequest"
             />
@@ -158,6 +191,7 @@ export default {
       sections: [],
       store: null,
       section_id: null,
+      store_field: null,
       store_waiting: null,
       file: null,
       fileType: "",
@@ -176,6 +210,10 @@ export default {
         descProd: null,
         descProdEn: null,
         active: true,
+        AddimgUrls: [],
+        additionalImages: [],
+        imageId: [],
+        imgUrls: [],
       },
       dropdownOptions: {},
       arabicRegex: /^[\u0600-\u06FF\s]+$/,
@@ -186,10 +224,15 @@ export default {
   methods: {
     onFileSelect(files) {
       this.additionalImages = files;
-      console.log("additionalImages", this.additionalImages);
     },
     onFileRemove(index) {
       this.$delete(this.imgUrls, index);
+    },
+    onFileSelectField(files) {
+      this.data.additionalImages = files;
+    },
+    onFileRemoveField(index) {
+      this.$delete(this.data.imgUrls, index);
     },
     async getStoreData() {
       try {
@@ -203,12 +246,11 @@ export default {
         this.data.descProdEn = res.data.data.Store.description_en;
         this.data.media.path = res.data.data.Store.logo;
         this.data.section_id = res.data.data.Store.category;
+        this.data.store_field = res.data.data.Store.store_field;
         this.AddimgUrls =
           res.data.data.Store.images &&
           res.data.data.Store.images.map((item) => item.url);
-        this.imageId = res.data.data.Store.images.map(
-          (item) => item.id
-        );
+        this.imageId = res.data.data.Store.images.map((item) => item.id);
         this.store_field = res.data.data.Store.store_field;
         this.showFields(this.store_field);
       } catch (error) {
@@ -241,7 +283,7 @@ export default {
       try {
         await this.$axios({
           method: "DELETE",
-          url: `/images/${imageId}`,
+          url: `/delete-file/${imageId}`,
         });
         this.isWaitingRequest = false;
         this.$message.success(this.$t("MESSAGES.deletedSuccessfully"));
@@ -252,14 +294,32 @@ export default {
         this.$message.error(error.response.data.message);
       }
     },
+    async AdddonFileRemoveField(index) {
+      // Remove the image URL from imgUrls
+      const imageId = this.data.AddimageId[index];
+
+      // Remove the image from additionalImages
+      this.$delete(this.data.additional_Images, index);
+      try {
+        await this.$axios({
+          method: "DELETE",
+          url: `/delete-file/${imageId}`,
+        });
+        this.isWaitingRequest = false;
+        this.$message.success(this.$t("MESSAGES.deletedSuccessfully"));
+        this.$delete(this.data.AddimgUrls, index);
+      } catch (error) {
+        this.isWaitingRequest = false;
+        // Handle error as needed
+        this.$message.error(error.response.data.message);
+      }
+    },
     showFields(storeId) {
-      console.log("aaaaaa", storeId)
       if (storeId) {
         // this.data.section_id = storeId;
         // Fetch options for dropdown fields
         this.dropdownOptions = {};
         storeId.forEach((field) => {
-          console.log("aaaaaa", field.field)
           if (field.field.type == "dropdown") {
             this.fetchDropdownOptions(field.field.id);
           }
@@ -315,14 +375,17 @@ export default {
       const REQUEST_DATA = new FormData();
 
       // Basic fields
+      REQUEST_DATA.append("_method", "put");
       REQUEST_DATA.append("name[ar]", this.data.nameAr);
       REQUEST_DATA.append("name[en]", this.data.nameEn);
       REQUEST_DATA.append("description[ar]", this.data.descProd);
       REQUEST_DATA.append("description[en]", this.data.descProdEn);
-      REQUEST_DATA.append("logo", this.data.media.file);
+      if (this.data.media.file){
+        REQUEST_DATA.append("logo", this.data.media.file);
+      }
 
       // Additional images
-      if (this.additionalImages.length > 0) {
+      if (this.additionalImages?.length > 0) {
         for (let image of this.additionalImages) {
           REQUEST_DATA.append("images[]", image);
         }
@@ -335,7 +398,31 @@ export default {
       REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
 
       // Dynamically handle additional fields based on section selection
-      if (this.data.section_id && this.data.section_id.fields) {
+      if (this.data.section_id && this.data.store_field) {
+        this.data.store_field?.forEach((field, index) => {
+          if (field.field.type === "text" || field.field.type === "dropdown") {
+            if (this.data[field.field.name]) {
+              // For text or dropdown fields, append the value
+              REQUEST_DATA.append(`fields[${index}][id]`, field.field.id);
+              REQUEST_DATA.append(
+                `fields[${index}][value]`,
+                this.data[field.field.name]
+              );
+            }
+          } else if (field.field.type === "file") {
+            // For file fields, append each file as a separate value
+            REQUEST_DATA.append(`fields[${index}][id]`, field.field.id);
+            this.data.additionalImages?.forEach((file, fileIndex) => {
+              REQUEST_DATA.append(
+                `fields[${index}][value][${fileIndex}]`,
+                file
+              );
+            }
+          );
+          }
+        });
+      }
+if (this.data.section_id && this.data.section_id.fields) {
         this.data.section_id.fields.forEach((field, index) => {
           if (field.type === "text" || field.type === "dropdown") {
             if (this.data[field.name]){
@@ -360,12 +447,11 @@ export default {
           }
         });
       }
-
       // Send the request with the FormData
       try {
         await this.$axios({
           method: "POST",
-          url: "stores",
+          url: `stores/${this.$route.params.id}`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;

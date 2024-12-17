@@ -1276,7 +1276,7 @@ const routes = [
             },
           },
           {
-            path: "create/:id",
+            path: "create",
             name: "Createproviders",
             component: CreateProviders,
             meta: {

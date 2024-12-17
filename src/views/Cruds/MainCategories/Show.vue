@@ -33,7 +33,7 @@
             v-model.trim="data.nameEn"
             disabled
           />
-
+          <h5 class="text-center font-weight-bold mt-5" style="color: #1F92D6">{{ $t("PLACEHOLDERS.additional_fields") }}</h5>
           <div class="w-100">
             <div class="row justify-content-center">
               <div
@@ -67,6 +67,28 @@
                     disabled
                   />
                 </div>
+                <div v-if="item.options">
+                  <h6 class="font-weight-bold" style="color: #1F92D6">{{ $t("PLACEHOLDERS.options") }}:</h6>
+                  <div v-for="(option, optionIndex) in item.options" :key="'option' + optionIndex">
+                      <div class="d-flex">
+                        <base-input
+                          col="5"
+                          type="text"
+                          :placeholder="$t('PLACEHOLDERS.option_name_ar')"
+                          v-model="option.name_ar"
+                          disabled
+                        />
+                        <base-input
+                          col="5"
+                          type="text"
+                          :placeholder="$t('PLACEHOLDERS.option_name_en')"
+                          v-model="option.name_en"
+                          disabled
+                        />
+                      </div>
+                    </div>
+                </div>
+                <hr class="my-5">
               </div>
             </div>
           </div>
@@ -170,6 +192,7 @@ export default {
           id: field.id,
           name_ar: field.name_ar,
           name_en: field.name_en,
+          options: field.options,
           type: {
             id: 0,
             value: field.type,
@@ -190,68 +213,6 @@ export default {
       }
     },
     // End:: Get Data To Edit
-    // Start:: validate Form Inputs
-    validateFormInputs() {
-      this.isWaitingRequest = true;
-
-      if (!this.data.nameAr) {
-        this.isWaitingRequest = false;
-        this.$message.error(this.$t("VALIDATION.nameAr"));
-        return;
-      } else if (!this.data.nameEn) {
-        this.isWaitingRequest = false;
-        this.$message.error(this.$t("VALIDATION.nameEn"));
-        return;
-      } else {
-        this.submitForm();
-        return;
-      }
-    },
-    // End:: validate Form Inputs
-
-    // Start:: Submit Form
-    async submitForm() {
-      const REQUEST_DATA = new FormData();
-
-      if (this.data.image.file) {
-        REQUEST_DATA.append("logo", this.data.image.file);
-      }
-      // Start:: Append Request Data
-      REQUEST_DATA.append("name[ar]", this.data.nameAr);
-      REQUEST_DATA.append("name[en]", this.data.nameEn);
-      REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
-      this.data?.fields.forEach((item, index) => {
-        REQUEST_DATA.append(
-          `categories[field_name][ar][${index}]`,
-          item.name_ar
-        );
-        REQUEST_DATA.append(
-          `categories[field_name][en][${index}]`,
-          item.name_en
-        );
-        REQUEST_DATA.append(
-          `categories[field_name][type][${index}]`,
-          item.type?.value
-        );
-      });
-      REQUEST_DATA.append("_method", "PUT");
-      // Start:: Append Request Data
-
-      try {
-        await this.$axios({
-          method: "POST",
-          url: `categories/${this.$route.params.id}`,
-          data: REQUEST_DATA,
-        });
-        this.isWaitingRequest = false;
-        this.$message.success(this.$t("MESSAGES.editedSuccessfully"));
-        this.$router.push({ path: "/categories/all" });
-      } catch (error) {
-        this.isWaitingRequest = false;
-        this.$message.error(error.response.data.message);
-      }
-    },
-    // End:: Submit Form
   },
 
   async created() {
@@ -275,6 +236,6 @@ export default {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin: auto;
+  margin: auto !important;
 }
 </style>
