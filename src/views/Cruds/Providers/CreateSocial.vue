@@ -143,7 +143,7 @@
           // Transform the API response
           this.phones = res.data.data.Social?.mobile?.map((phone) => ({
             phone: phone,
-          }));
+          })) || [{ phone: "" }];
           this.data.WhatsApp_contact = res.data.data.Social?.whatsapp;
           this.data.twitter = res.data.data.Social?.x;
           this.data.tiktok = res.data.data.Social?.tiktok;

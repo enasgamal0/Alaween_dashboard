@@ -1,25 +1,25 @@
 <template>
   <main>
     <section class="file-container my-10">
-      <h3
+      <h5
         style="
-          color: #000;
+          color: #1F92D6;
           font-weight: 500;
-          font-family: cairo;
-          cursor: pointer;
         "
       >
         <slot></slot>
-      </h3>
-      <div @click="onFileClick" class="uploadphoto">
+      </h5>
+      <div class="uploadphoto">
         <v-icon color="#0b7477">mdi-paperclip</v-icon>
         <img
+         @click="onFileClick"
           data-v-01034da1=""
           src="../../assets/media/images/image.png"
           alt="Image To Upload"
           width="100"
           height="100"
           class="image_placeholder"
+          style="cursor: pointer;"
         />
       </div>
       <div class="image-wrapper" ref="imageWrapper">

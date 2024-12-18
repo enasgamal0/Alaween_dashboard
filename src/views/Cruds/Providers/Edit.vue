@@ -78,38 +78,37 @@
             :optionsList="sections"
             :placeholder="$t('PLACEHOLDERS.section')"
             v-model="data.section_id"
-            @change="showFields"
+            @input="change_fields"
             required
           />
           <!-- End:: Store Input -->
 
-          <!-- Start:: Dynamically Render Fields Based on Store Selection -->aaaaaaaaaaaa{{
-            data
-          }}
+          <!-- Start:: Dynamically Render Fields Based on Store Selection -->
           <div v-if="data.section_id && data.store_field">
-            <div v-for="field in data.store_field" :key="field.field.id">
-              <div v-if="field.field.type === 'dropdown'" class="py-1">
+            <div v-for="field in data.store_field" :key="field.field?.id">
+              <div v-if="field.field?.type === 'dropdown'" class="py-1">
                 <base-select-input
                   :placeholder="field.field.name"
-                  v-model="data[field.field.name]"
-                  :optionsList="dropdownOptions[field.field.id]"
+                  v-model="field.selected_option"
+                  :optionsList="field.field.options"
                   :required="true"
                 />
               </div>
-              <div v-if="field.field.type === 'text'" class="py-1">
+              <div v-if="field.field?.type === 'text'" class="py-1">
                 <base-input
                   type="text"
                   :placeholder="field.field.name"
-                  v-model="data[field.field.name]"
+                  v-model="field.value"
                   :required="true"
                 />
               </div>
-              <div v-if="field.field.type == 'file'" class="py-1">
+              <div v-if="field?.field?.type == 'file'" class="py-1">
+                <h5 style="color: #1f92d6">{{ field.name }}</h5>
                 <base-multi-image-upload-input
-                  :urls="AddimgUrls"
+                  :urls="files"
                   multiple
                   @onFileSelect="onFileSelectField"
-                  @onFileRemove="AdddonFileRemoveField"
+                  @onFileRemove="AdddonFileRemove"
                 >
                   {{ $t("PLACEHOLDERS.imagesefed") }}
                   {{ $t("PLACEHOLDERS.extendPhoto") }}
@@ -118,29 +117,35 @@
             </div>
           </div>
           <div v-if="data.section_id && data.section_id.fields">
-            <div v-for="field in data.section_id.fields" :key="field.id">
-              <div v-if="field.type === 'dropdown'" class="py-1">
+            <div v-for="field in data.section_id.fields" :key="field?.id">
+              <hr class="my-5 py-2" />
+              <div v-if="field?.type === 'dropdown'" class="py-1">
                 <base-select-input
                   :placeholder="field.name"
                   v-model="data[field.name]"
-                  :optionsList="dropdownOptions[field.id]"
+                  :optionsList="field.options"
                   :required="true"
                 />
               </div>
-              <div v-if="field.type === 'text'" class="py-1">{{data}}
+              <div v-if="field?.type === 'text'" class="py-1">
                 <base-input
                   type="text"
                   :placeholder="field.name"
                   v-model="data[field.name]"
                   :required="true"
-                />{{ data[field.name] }}
-              </div>
-              <div v-if="field.type == 'file'" class="py-1">
-                <base-name-preview-file-upload-input
-                  :placeholder="field.name"
-                  v-model="data[field.name]"
-                  :required="true"
                 />
+              </div>
+              <div v-if="field?.type == 'file'" class="py-1">
+                <h5 style="color: #1f92d6">{{ field.name }}</h5>
+                <base-multi-image-upload-input
+                  :urls="files"
+                  multiple
+                  @onFileSelect="onFileSelectField"
+                  @onFileRemove="AdddonFileRemove"
+                >
+                  {{ $t("PLACEHOLDERS.imagesefed") }}
+                  {{ $t("PLACEHOLDERS.extendPhoto") }}
+                </base-multi-image-upload-input>
               </div>
             </div>
           </div>
@@ -190,17 +195,16 @@ export default {
       isWaitingRequest: false,
       sections: [],
       store: null,
-      section_id: null,
-      store_field: null,
       store_waiting: null,
       file: null,
       fileType: "",
       AddimgUrls: [],
+      files: [],
       additionalImages: [],
       imageId: [],
       imgUrls: [],
-      store_field: null,
       data: {
+        section_id: null,
         media: {
           path: null,
           file: null,
@@ -238,7 +242,7 @@ export default {
       try {
         let res = await this.$axios({
           method: "GET",
-          url: `stores/${this.$route.params.id}`,
+          url: `stores/${this.$route.params?.id}`,
         });
         this.data.nameAr = res.data.data.Store.name_ar;
         this.data.nameEn = res.data.data.Store.name_en;
@@ -246,13 +250,21 @@ export default {
         this.data.descProdEn = res.data.data.Store.description_en;
         this.data.media.path = res.data.data.Store.logo;
         this.data.section_id = res.data.data.Store.category;
-        this.data.store_field = res.data.data.Store.store_field;
+        this.data.store_field = res.data.data.Store.store_field?.map((item) => {
+          if (item?.field?.options) {
+            item.selected_option = item?.field?.options?.find(
+              (option) => option?.selected == true
+            );
+          }
+          return item;
+        });
         this.AddimgUrls =
           res.data.data.Store.images &&
           res.data.data.Store.images.map((item) => item.url);
-        this.imageId = res.data.data.Store.images.map((item) => item.id);
-        this.store_field = res.data.data.Store.store_field;
-        this.showFields(this.store_field);
+        this.imageId = res.data.data.Store.images.map((item) => item?.id);
+        this.files = res.data.data.Store.store_field
+          .filter((item) => item.files !== null)
+          .flatMap((item) => item.files.map((file) => file.url));
       } catch (error) {
         console.log(error.response.data.message);
       }
@@ -275,66 +287,45 @@ export default {
       this.data.media = selectedImage;
     },
     async AdddonFileRemove(index) {
+      console.log("delete: " + index);
+
+      // Get the imageId from the 'imageId' array using the index
+      const imageId = this.imageId[index];
+
+      // Make sure the imageId is valid before proceeding
+      if (!imageId) {
+        console.error("Image ID not found.");
+        return;
+      }
+
       // Remove the image URL from imgUrls
-      const imageId = this.AddimageId[index];
+      this.$delete(this.AddimgUrls, index);
 
       // Remove the image from additionalImages
-      this.$delete(this.additional_Images, index);
+      this.$delete(this.additionalImages, index);
+
       try {
+        // Send a delete request to the API using the imageId
         await this.$axios({
-          method: "DELETE",
-          url: `/delete-file/${imageId}`,
+          method: "GET",
+          url: `/delete-file/${imageId}`, // Use imageId in the URL for deletion
         });
         this.isWaitingRequest = false;
         this.$message.success(this.$t("MESSAGES.deletedSuccessfully"));
-        this.$delete(this.AddimgUrls, index);
       } catch (error) {
         this.isWaitingRequest = false;
         // Handle error as needed
         this.$message.error(error.response.data.message);
       }
     },
-    async AdddonFileRemoveField(index) {
-      // Remove the image URL from imgUrls
-      const imageId = this.data.AddimageId[index];
-
-      // Remove the image from additionalImages
-      this.$delete(this.data.additional_Images, index);
-      try {
-        await this.$axios({
-          method: "DELETE",
-          url: `/delete-file/${imageId}`,
-        });
-        this.isWaitingRequest = false;
-        this.$message.success(this.$t("MESSAGES.deletedSuccessfully"));
-        this.$delete(this.data.AddimgUrls, index);
-      } catch (error) {
-        this.isWaitingRequest = false;
-        // Handle error as needed
-        this.$message.error(error.response.data.message);
-      }
-    },
-    showFields(storeId) {
-      if (storeId) {
-        // this.data.section_id = storeId;
-        // Fetch options for dropdown fields
-        this.dropdownOptions = {};
-        storeId.forEach((field) => {
-          if (field.field.type == "dropdown") {
-            this.fetchDropdownOptions(field.field.id);
-          }
-        });
-      }
-    },
-
-    async fetchDropdownOptions(fieldId) {
-      try {
-        const res = await this.$axios.get(`/dropdown-options/${fieldId}`);
-        this.dropdownOptions[fieldId] = res.data.options;
-      } catch (error) {
-        console.error("Error fetching dropdown options", error);
-      }
-    },
+    // async fetchDropdownOptions(fieldId) {
+    //   try {
+    //     const res = await this.$axios.get(`/dropdown-options/${fieldId}`);
+    //     this.dropdownOptions[fieldId] = res.data.options;
+    //   } catch (error) {
+    //     console.error("Error fetching dropdown options", error);
+    //   }
+    // },
 
     validateFormInputs() {
       this.isWaitingRequest = true;
@@ -380,90 +371,108 @@ export default {
       REQUEST_DATA.append("name[en]", this.data.nameEn);
       REQUEST_DATA.append("description[ar]", this.data.descProd);
       REQUEST_DATA.append("description[en]", this.data.descProdEn);
-      if (this.data.media.file){
+      if (this.data.media.file) {
         REQUEST_DATA.append("logo", this.data.media.file);
       }
 
       // Additional images
-      if (this.additionalImages?.length > 0) {
+      if (this.additionalImages.length > 0) {
         for (let image of this.additionalImages) {
           REQUEST_DATA.append("images[]", image);
         }
       }
-
-      // Section ID
-      REQUEST_DATA.append("category_id", this.data.section_id?.id);
-
       // Active status
       REQUEST_DATA.append("is_active", this.data.active ? 1 : 0);
-
+      // Section ID
+      REQUEST_DATA.append("category_id", this.data.section_id?.id);
+      
       // Dynamically handle additional fields based on section selection
-      if (this.data.section_id && this.data.store_field) {
-        this.data.store_field?.forEach((field, index) => {
-          if (field.field.type === "text" || field.field.type === "dropdown") {
-            if (this.data[field.field.name]) {
-              // For text or dropdown fields, append the value
-              REQUEST_DATA.append(`fields[${index}][id]`, field.field.id);
+      if (this.data.store_field) {
+        this.data.store_field.forEach((field, index) => {
+          if (field.field) {
+            // For text or dropdown fields, append the value
+            if (field.field?.type === "text") {
+              REQUEST_DATA.append(`fields[${index}][id]`, field.field?.id);
               REQUEST_DATA.append(
                 `fields[${index}][value]`,
-                this.data[field.field.name]
+                field.value // Append text value
               );
-            }
-          } else if (field.field.type === "file") {
-            // For file fields, append each file as a separate value
-            REQUEST_DATA.append(`fields[${index}][id]`, field.field.id);
-            this.data.additionalImages?.forEach((file, fileIndex) => {
+            } else if (field.field?.type === "dropdown") {
+              REQUEST_DATA.append(`fields[${index}][id]`, field.field?.id);
               REQUEST_DATA.append(
-                `fields[${index}][value][${fileIndex}]`,
-                file
+                `fields[${index}][value]`,
+                field.selected_option?.id // Append selected option for dropdown
               );
+            } else if (field.field?.type === "file") {
+              REQUEST_DATA.append(`fields[${index}][id]`, field.field?.id);
+              this.data.additionalImages?.forEach((file, fileIndex) => {
+                REQUEST_DATA.append(
+                  `fields[${index}][value][${fileIndex}]`,
+                  file
+                );
+              });
             }
-          );
+          } else if (field && !field.field) {
+            // For text or dropdown fields, append the value
+            if (field?.type === "text") {
+              REQUEST_DATA.append(`fields[${index}][id]`, field?.id);
+              console.log("aaaaaaaaa", field)
+              REQUEST_DATA.append(
+                `fields[${index}][value]`,
+                field?.value // Append text value
+              );
+            } else if (field?.type === "dropdown") {
+              REQUEST_DATA.append(`fields[${index}][id]`, field?.id);
+              REQUEST_DATA.append(
+                `fields[${index}][value]`,
+                field.selected_option?.id // Append selected option for dropdown
+              );
+            } else if (field?.type === "file") {
+              REQUEST_DATA.append(`fields[${index}][id]`, field?.id);
+              this.data.additionalImages?.forEach((file, fileIndex) => {
+                REQUEST_DATA.append(
+                  `fields[${index}][value][${fileIndex}]`,
+                  file
+                );
+              });
+            }
           }
         });
       }
-if (this.data.section_id && this.data.section_id.fields) {
-        this.data.section_id.fields.forEach((field, index) => {
-          if (field.type === "text" || field.type === "dropdown") {
-            if (this.data[field.name]){
-              // For text or dropdown fields, append the value
-              REQUEST_DATA.append(`fields[${index}][id]`, field.id);
-              REQUEST_DATA.append(
-                `fields[${index}][value]`,
-                this.data[field.name]
-              );
-            }
-          } else if (
-            field.type === "file"
-          ) {
-            // For file fields, append each file as a separate value
-            REQUEST_DATA.append(`fields[${index}][id]`, field.id);
-            this.data[field.name].forEach((file, fileIndex) => {
-              REQUEST_DATA.append(
-                `fields[${index}][value][${fileIndex}]`,
-                file
-              );
-            });
-          }
-        });
-      }
+
       // Send the request with the FormData
       try {
         await this.$axios({
           method: "POST",
-          url: `stores/${this.$route.params.id}`,
+          url: `stores/${this.$route.params?.id}`,
           data: REQUEST_DATA,
         });
         this.isWaitingRequest = false;
-        this.$message.success(this.$t("MESSAGES.addedSuccessfully"));
-        this.$router.push({ path: "/providers/all" });
+        this.$message.success(this.$t("MESSAGES.editedSuccessfully"));
+        this.getStoreData();
+        // this.$router.push({ path: "/providers/all" });
       } catch (error) {
         this.isWaitingRequest = false;
         this.$message.error(error.response.data.message);
       }
     },
-  },
 
+    change_fields() {
+      this.data.store_field = []; // Reset store fields
+      // Load the new fields for the selected section
+      if (this.data.section_id) {
+        console.log("this.sections", this.sections);
+        console.log("this.data.section_id", this.data.section_id?.id);
+        const selectedSection = this.sections.find(
+          (section) => section.id == this.data.section_id?.id
+        );
+        if (selectedSection) {
+          console.log("resss", this.data.store_field);
+          this.data.store_field = selectedSection.fields || []; // Assign new fields for the section
+        }
+      }
+    },
+  },
   created() {
     this.getStoreData();
     this.getSections();

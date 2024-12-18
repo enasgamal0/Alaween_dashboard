@@ -85,11 +85,12 @@
           <!-- Start:: Dynamically Render Fields Based on Store Selection -->
           <div v-if="data.section_id && data.section_id.fields">
             <div v-for="field in data.section_id.fields" :key="field.id">
+              <hr class="my-5 py-2"/>
               <div v-if="field.type === 'dropdown'" class="py-1">
                 <base-select-input
                   :placeholder="field.name"
+                  :optionsList="field.options"
                   v-model="data[field.name]"
-                  :optionsList="dropdownOptions[field.id]"
                   :required="true"
                 />
               </div>
@@ -106,7 +107,7 @@
                   :placeholder="field.name"
                   v-model="data.files"
                   :required="true"
-                />{{ data.files }} -->
+                />{{ data.files }} --><h5 style="color: #1F92D6;">{{ field.name }}</h5>
                 <base-multi-image-upload-input
                   :urls="data.imgUrls"
                   multiple
@@ -181,9 +182,9 @@ export default {
         nameEn: null,
         descProd: null,
         descProdEn: null,
+        dropdownOptions: {},
         active: true,
       },
-      dropdownOptions: {},
       arabicRegex: /^[\u0600-\u06FF\s]+$/,
       EnRegex: /[\u0600-\u06FF]/,
     };
@@ -224,23 +225,24 @@ export default {
       if (storeId && storeId.fields) {
         this.data.section_id = storeId;
         // Fetch options for dropdown fields
-        this.dropdownOptions = {}; // Clear any existing dropdown options
-        storeId.fields.forEach((field) => {
-          if (field.type === "dropdown") {
-            this.fetchDropdownOptions(field.id);
-          }
-        });
+        // this.dropdownOptions = {}; // Clear any existing dropdown options
+        // storeId.fields.forEach((field) => {
+        //   if (field.type === "dropdown") {
+        //     this.fetchDropdownOptions(field.id);
+        //   }
+        // });
       }
     },
 
-    async fetchDropdownOptions(fieldId) {
-      try {
-        const res = await this.$axios.get(`/dropdown-options/${fieldId}`);
-        this.dropdownOptions[fieldId] = res.data.options;
-      } catch (error) {
-        console.error("Error fetching dropdown options", error);
-      }
-    },
+    // async fetchDropdownOptions(fieldId) {
+    //   try {
+    //     const res = await this.$axios.get(`/dropdown-options/${fieldId}`);
+    //     console.log("res", res);
+    //     this.dropdownOptions[fieldId] = res.data.options;
+    //   } catch (error) {
+    //     console.error("Error fetching dropdown options", error);
+    //   }
+    // },
 
     validateFormInputs() {
       this.isWaitingRequest = true;
@@ -303,18 +305,22 @@ export default {
       // Dynamically handle additional fields based on section selection
       if (this.data.section_id && this.data.section_id.fields) {
         this.data.section_id.fields.forEach((field, index) => {
-          if (field.type === "text" || field.type === "dropdown") {
-            if (this.data[field.name]){
-              // For text or dropdown fields, append the value
+          if (this.data[field.name]) {
+            // For text or dropdown fields, append the value
+            if (field.type === "text") {
               REQUEST_DATA.append(`fields[${index}][id]`, field.id);
               REQUEST_DATA.append(
                 `fields[${index}][value]`,
                 this.data[field.name]
               );
+            } else if (field.type === "dropdown") {
+              REQUEST_DATA.append(`fields[${index}][id]`, field.id);
+              REQUEST_DATA.append(
+                `fields[${index}][value]`,
+                this.data[field.name]?.id
+              );
             }
-          } else if (
-            field.type === "file"
-          ) {
+          } else if (field.type === "file") {
             // For file fields, append each file as a separate value
             REQUEST_DATA.append(`fields[${index}][id]`, field.id);
             this.data.additionalImages?.forEach((file, fileIndex) => {

@@ -160,7 +160,7 @@
       <!-- End:: Admins Route -->
 
       <!-- Start:: users Route -->
-      <div
+      <!-- <div
         class="home_route"
         @click="$emit('fireToggleNavDrawerEmit')"
         v-if="$can('user index', 'user')"
@@ -178,7 +178,7 @@
             {{ $t("PLACEHOLDERS.manage_users") }}
           </span>
         </router-link>
-      </div>
+      </div> -->
       <!-- End:: users Route -->
 
       <!-- Start:: providers Route -->

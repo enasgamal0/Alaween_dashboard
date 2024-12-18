@@ -250,19 +250,31 @@ export default {
     },
     
     async AdddonFileRemove(index) {
+      console.log("delete: " + index);
+
+      // Get the imageId from the 'imageId' array using the index
+      const imageId = this.imageId[index];
+
+      // Make sure the imageId is valid before proceeding
+      if (!imageId) {
+        console.error("Image ID not found.");
+        return;
+      }
+
       // Remove the image URL from imgUrls
-      const imageId = this.AddimageId[index];
+      this.$delete(this.AddimgUrls, index);
 
       // Remove the image from additionalImages
-      this.$delete(this.additional_Images, index);
+      this.$delete(this.additionalImages, index);
+
       try {
+        // Send a delete request to the API using the imageId
         await this.$axios({
-          method: "DELETE",
-          url: `/images/${imageId}`,
+          method: "GET",
+          url: `/delete-file/${imageId}`, // Use imageId in the URL for deletion
         });
         this.isWaitingRequest = false;
         this.$message.success(this.$t("MESSAGES.deletedSuccessfully"));
-        this.$delete(this.AddimgUrls, index);
       } catch (error) {
         this.isWaitingRequest = false;
         // Handle error as needed
